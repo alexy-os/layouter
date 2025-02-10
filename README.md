@@ -1,5 +1,15 @@
 # Layouter UI
 
+> ⚠️ **Early Development Warning**
+> 
+> This project is currently in early development and serves as a proof of concept demonstrating that a single rectangle can be the foundation for any layout design. The current functionality differs from the expected final implementation:
+> 
+> - Tools are temporarily separated and require manual activation
+> - Cursor and movement tools must be clicked each time to engage their functionality
+> - In the grid version, column selection is mandatory before drawing
+> 
+> We're working on streamlining these interactions for a more seamless experience.
+
 > "Sometimes the most sophisticated solution is the simplest one" - *A British developer, probably*
 
 ## What is Layouter?
@@ -60,8 +70,7 @@ git clone https://github.com/alexy-os/layouter.git
 # Enter the premises
 cd layouter
 
-# Install dependencies (with a cup of tea in hand)
-npm install
+# Start live server
 ```
 
 ## Why Just Rectangles?
@@ -81,4 +90,4 @@ We welcome contributions with the same enthusiasm as a proper British host welco
 
 ## License
 
-MIT - As free as speech, not as free as beer (we are British, after all).
+MIT - As free as speech, not as free as beer (we joke gracefully like the Brits, after all).
