@@ -5,5 +5,19 @@
       "src": "**",
       "use": "@vercel/static"
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/pure-html-points/:path*",
+      "destination": "/pure-html-points/:path*"
+    },
+    {
+      "source": "/tailwind-points/:path*",
+      "destination": "/tailwind-points/:path*"
+    },
+    {
+      "source": "/tailwind-grid/:path*",
+      "destination": "/tailwind-grid/:path*"
+    }
   ]
 } 
