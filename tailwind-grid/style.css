@@ -1,0 +1,25 @@
+@layer components {
+  .section-highlight {
+    @apply border-2 border-dashed border-gray-200 dark:border-gray-700;
+  }
+  
+  .container-highlight {
+    @apply border border-gray-100 dark:border-gray-800;
+  }
+  
+  .layout-highlight {
+    @apply border border-blue-100 dark:border-blue-900 bg-gray-50/30 dark:bg-gray-800/30;
+  }
+  
+  .column-active {
+    @apply bg-blue-100/30 dark:bg-blue-900/30;
+  }
+  
+  [data-type="column"] {
+    @apply relative transition-colors;
+  }
+  
+  [data-type="column"].active {
+    @apply outline-2 outline-dashed outline-blue-500;
+  }
+}

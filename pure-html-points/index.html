@@ -1,0 +1,269 @@
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Tailwind UI Builder</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Tailwind CSS Config -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            ui: {
+              blue: '#007bff',
+              hover: '#0056b3',
+              gray: '#6c757d',
+              border: {
+                DEFAULT: '#e9ecef',
+                dark: '#2d3748'
+              },
+              bg: {
+                DEFAULT: '#f8f9fa',
+                dark: '#1a202c'
+              }
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Custom Base Styles -->
+  <style type="text/tailwindcss">
+    @layer base {
+      body {
+        @apply font-sans antialiased text-gray-800 bg-ui-bg dark:bg-ui-bg-dark dark:text-gray-200;
+      }
+    }
+    
+    @layer components {
+      .tool-btn {
+        @apply p-2 rounded-md text-ui-gray hover:bg-ui-border hover:text-gray-800 transition-colors dark:hover:bg-gray-700 dark:hover:text-gray-200;
+      }
+      
+      .tool-btn.active {
+        @apply bg-white text-ui-blue shadow-sm dark:bg-gray-800;
+      }
+      
+      .layer-item {
+        @apply select-none text-sm transition-colors mb-1;
+      }
+      
+      .layer-item:hover {
+        @apply bg-transparent;
+      }
+      
+      .layer-item.active {
+        @apply text-ui-blue dark:text-blue-200;
+      }
+      
+      .layer-item.dragging {
+        @apply opacity-50;
+      }
+      
+      .layer {
+        @apply absolute cursor-move select-none transition-colors;
+      }
+      
+      .layer.selected {
+        @apply border-2 border-ui-blue shadow-blue-100 dark:shadow-blue-900;
+      }
+      
+      .resize-handle {
+        @apply absolute w-2 h-2 bg-ui-blue border border-white rounded-full dark:border-gray-800;
+      }
+
+      .resize-handle.nw {
+        @apply -left-1 -top-1 cursor-nw-resize;
+      }
+
+      .resize-handle.ne {
+        @apply -right-1 -top-1 cursor-ne-resize;
+      }
+
+      .resize-handle.sw {
+        @apply -left-1 -bottom-1 cursor-sw-resize;
+      }
+
+      .resize-handle.se {
+        @apply -right-1 -bottom-1 cursor-se-resize;
+      }
+      
+      .theme-toggle {
+        @apply p-2 rounded-md text-ui-gray hover:bg-ui-border hover:text-gray-800 transition-colors dark:hover:bg-gray-700 dark:hover:text-gray-200;
+      }
+      
+      .temp-rectangle {
+        @apply absolute border-2 border-dashed border-blue-600 bg-blue-500 bg-opacity-50 pointer-events-none;
+      }
+      
+      .section-highlight {
+        @apply border-2 border-dashed border-gray-200 dark:border-gray-700;
+      }
+      
+      .container-highlight {
+        @apply border border-gray-100 dark:border-gray-800;
+      }
+      
+      .layout-highlight {
+        @apply border border-blue-100 dark:border-blue-900;
+      }
+      
+      .nested-layer {
+        @apply text-xs text-gray-500 dark:text-gray-400 w-48;
+      }
+      
+      .nested-layer > div {
+        @apply bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 rounded-md;
+      }
+      
+      .edit-btn {
+        @apply opacity-0 group-hover:opacity-100 transition-opacity;
+      }
+      
+      .layer-item:hover .edit-btn {
+        @apply opacity-100;
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="flex flex-col h-screen">
+    <nav class="bg-white border-b border-ui-border shadow-sm p-4 flex items-center justify-between dark:bg-gray-900 dark:border-ui-border-dark">
+      <div class="flex items-center gap-1 bg-ui-bg p-1 rounded-lg dark:bg-gray-800">
+        <button id="cursorBtn" class="tool-btn active" title="Select">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 3l7 19 2-8 8-2L3 3z"/>
+          </svg>
+        </button>
+        <button id="grabBtn" class="tool-btn" title="Grab">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 5.5V9M9 13v5.5M9 13h.01M12 6v4M12 12.5V19M12 12.5h.01M15 5.5V9M15 13v5.5M15 13h.01"/>
+          </svg>
+        </button>
+        <button id="rectangleBtn" class="tool-btn" title="Rectangle">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+          </svg>
+        </button>
+        <button id="textBtn" class="tool-btn" title="Text">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2z"/>
+            <path d="M8 7h8M8 12h8M8 17h5"/>
+          </svg>
+        </button>
+        <button id="deleteBtn" class="tool-btn" title="Delete">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"/>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="flex items-center gap-2">
+        <button id="themeToggleBtn" class="theme-toggle" title="Toggle theme">
+          <!-- Sun icon (show in dark mode) -->
+          <svg class="w-5 h-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <!-- Moon icon (show in light mode) -->
+          <svg class="w-5 h-5 block dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+          </svg>
+        </button>
+        <button id="exportBtn" class="flex items-center gap-2 bg-ui-blue hover:bg-ui-hover text-white px-4 py-2 rounded-md transition-colors">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Export to HTML
+        </button>
+      </div>
+    </nav>
+    
+    <div class="flex flex-1 overflow-hidden">
+      <div class="w-72 bg-white border-r border-ui-border p-5 dark:bg-gray-900 dark:border-ui-border-dark">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-sm font-semibold text-gray-600 dark:text-gray-400">Sections</h3>
+          <button id="addSectionBtn" class="tool-btn" title="Add Section">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+        <ul id="layerList" class="space-y-1"></ul>
+      </div>
+      
+      <div id="canvas" class="flex-1 relative bg-white shadow-inner dark:bg-gray-900"></div>
+      
+      <div class="w-72 bg-white border-l border-ui-border p-5 dark:bg-gray-900 dark:border-ui-border-dark">
+        <div id="elementProperties">
+          <h3 class="text-sm font-semibold text-gray-600 mb-4 dark:text-gray-400">Properties</h3>
+          <div class="space-y-4">
+            <div class="flex items-center gap-2">
+              <label class="text-sm text-ui-gray dark:text-gray-400">Color</label>
+              <select id="colorPicker" 
+                      class="w-full px-2 py-1 border border-ui-border rounded-md text-sm dark:bg-gray-800 dark:border-ui-border-dark">
+              </select>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <label class="text-sm text-ui-gray dark:text-gray-400">Radius</label>
+              <select id="borderRadius"
+                      class="w-full px-2 py-1 border border-ui-border rounded-md text-sm dark:bg-gray-800 dark:border-ui-border-dark">
+                <option value="none">None</option>
+                <option value="sm">Small</option>
+                <option value="md">Medium</option>
+                <option value="lg">Large</option>
+                <option value="xl">Extra Large</option>
+                <option value="2xl">2X Large</option>
+                <option value="3xl">3X Large</option>
+                <option value="full">Full</option>
+              </select>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <label class="text-sm text-ui-gray dark:text-gray-400">X</label>
+              <input type="number" id="posX" 
+                     class="w-20 px-2 py-1 border border-ui-border rounded-md text-sm dark:bg-gray-800 dark:border-ui-border-dark">
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <label class="text-sm text-ui-gray dark:text-gray-400">Y</label>
+              <input type="number" id="posY"
+                     class="w-20 px-2 py-1 border border-ui-border rounded-md text-sm dark:bg-gray-800 dark:border-ui-border-dark">
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <label class="text-sm text-ui-gray dark:text-gray-400">Width</label>
+              <input type="number" id="width"
+                     class="w-20 px-2 py-1 border border-ui-border rounded-md text-sm dark:bg-gray-800 dark:border-ui-border-dark">
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <label class="text-sm text-ui-gray dark:text-gray-400">Height</label>
+              <input type="number" id="height"
+                     class="w-20 px-2 py-1 border border-ui-border rounded-md text-sm dark:bg-gray-800 dark:border-ui-border-dark">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
