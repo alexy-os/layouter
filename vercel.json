@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/pure-html-points/(.*)",
+      "dest": "/pure-html-points/$1"
+    },
+    {
+      "src": "/tailwind-points/(.*)",
+      "dest": "/tailwind-points/$1"
+    },
+    {
+      "src": "/tailwind-grid/(.*)",
+      "dest": "/tailwind-grid/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "cleanUrls": true,
+  "trailingSlash": false
+} 
