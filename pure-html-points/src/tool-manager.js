@@ -4,7 +4,7 @@ export class ToolManager {
     grabBtn, 
     rectangleBtn, 
     textBtn, 
-    deleteBtn,
+    deleteBtn, 
     canvas, 
     layerManager,
     propertyManager

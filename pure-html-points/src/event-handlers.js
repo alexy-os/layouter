@@ -16,7 +16,6 @@ export class EventHandlers {
     this.dragStartY = 0;
     this.dragLayerStartX = 0;
     this.dragLayerStartY = 0;
-    this.activeLayoutContainer = null;
     this.initDragEvents();
   }
 
@@ -61,10 +60,7 @@ export class EventHandlers {
         this.propertyManager.deselectAllLayers();
       }
     } else if (currentTool === 'rectangle') {
-      const layout = this.findActiveLayoutContainer(e.target);
-      if (layout) {
-        this.startRectangleDrawing(layout);
-      }
+      this.startRectangleDrawing();
     } else if (currentTool === 'text') {
       this.addTextLayer();
     }
@@ -93,55 +89,47 @@ export class EventHandlers {
     }
   }
 
-  startRectangleDrawing(layoutContainer) {
+  startRectangleDrawing() {
     this.isDrawing = true;
-    this.activeLayoutContainer = layoutContainer;
     
-    const layoutRect = layoutContainer.getBoundingClientRect();
-    const canvasRect = this.canvas.getBoundingClientRect();
-    
-    this.startX = Math.max(this.startX, layoutRect.left - canvasRect.left);
-    this.startX = Math.min(this.startX, layoutRect.right - canvasRect.left);
-    this.startY = Math.max(this.startY, layoutRect.top - canvasRect.top);
-    this.startY = Math.min(this.startY, layoutRect.bottom - canvasRect.top);
-    
+    // Create temporary rectangle for preview
     this.tempRectangle = document.createElement('div');
     this.tempRectangle.classList.add('temp-rectangle');
     this.tempRectangle.style.position = 'absolute';
     this.tempRectangle.style.left = `${this.startX}px`;
     this.tempRectangle.style.top = `${this.startY}px`;
-    this.tempRectangle.style.backgroundColor = '#3b82f6';
-    this.tempRectangle.style.opacity = '0.5';
-    this.tempRectangle.style.border = '2px dashed #2563eb';
-    this.tempRectangle.style.pointerEvents = 'none';
+    
+    // Set z-index higher than any existing layer
     const highestZIndex = this.layerManager.getHighestZIndex();
     this.tempRectangle.style.zIndex = highestZIndex + 1;
+    
     this.canvas.appendChild(this.tempRectangle);
   }
 
   updateTempRectangle(e) {
-    if (!this.isDrawing || !this.tempRectangle || !this.activeLayoutContainer) return;
+    if (!this.isDrawing) return;
 
     const rect = this.canvas.getBoundingClientRect();
-    const layoutRect = this.activeLayoutContainer.getBoundingClientRect();
-    
     let currentX = e.clientX - rect.left;
     let currentY = e.clientY - rect.top;
     
-    currentX = Math.max(currentX, layoutRect.left - rect.left);
-    currentX = Math.min(currentX, layoutRect.right - rect.left);
-    currentY = Math.max(currentY, layoutRect.top - rect.top);
-    currentY = Math.min(currentY, layoutRect.bottom - rect.top);
+    // Snap to grid if rectangle tool is active
+    if (this.toolManager.getCurrentTool() === 'rectangle') {
+      currentX = this.toolManager.snapToGrid(currentX);
+      this.startX = this.toolManager.snapToGrid(this.startX);
+    }
     
     const width = Math.abs(currentX - this.startX);
     const height = Math.abs(currentY - this.startY);
     const left = Math.min(this.startX, currentX);
     const top = Math.min(this.startY, currentY);
     
-    this.tempRectangle.style.width = `${width}px`;
-    this.tempRectangle.style.height = `${height}px`;
-    this.tempRectangle.style.left = `${left}px`;
-    this.tempRectangle.style.top = `${top}px`;
+    if (this.tempRectangle) {
+      this.tempRectangle.style.width = `${width}px`;
+      this.tempRectangle.style.height = `${height}px`;
+      this.tempRectangle.style.left = `${left}px`;
+      this.tempRectangle.style.top = `${top}px`;
+    }
   }
 
   finishRectangleDrawing(e) {
@@ -149,19 +137,18 @@ export class EventHandlers {
     let currentX = e.clientX - rect.left;
     let currentY = e.clientY - rect.top;
     
-    const layoutRect = this.activeLayoutContainer.getBoundingClientRect();
-    
-    currentX = Math.max(currentX, layoutRect.left - rect.left);
-    currentX = Math.min(currentX, layoutRect.right - rect.left);
-    currentY = Math.max(currentY, layoutRect.top - rect.top);
-    currentY = Math.min(currentY, layoutRect.bottom - rect.top);
+    // Snap to grid if rectangle tool is active
+    if (this.toolManager.getCurrentTool() === 'rectangle') {
+      currentX = this.toolManager.snapToGrid(currentX);
+      this.startX = this.toolManager.snapToGrid(this.startX);
+    }
     
     const width = Math.abs(currentX - this.startX);
     const height = Math.abs(currentY - this.startY);
     const left = Math.min(this.startX, currentX);
     const top = Math.min(this.startY, currentY);
     
-    if (width > 10 && height > 10) {  
+    if (width > 10 && height > 10) {  // Only create if size is meaningful
       const layer = this.layerManager.createRectangleLayer(left, top, width, height);
       const layerData = this.layerManager.addLayer(layer, 'Rectangle');
       this.propertyManager.selectLayer(layer);
@@ -179,14 +166,6 @@ export class EventHandlers {
     const layer = this.layerManager.createTextLayer(this.startX, this.startY);
     const layerData = this.layerManager.addLayer(layer, 'Text');
     this.propertyManager.selectLayer(layer);
-  }
-
-  findActiveLayoutContainer(target) {
-    let current = target;
-    while (current && !current.classList.contains('grid')) {
-      current = current.parentElement;
-    }
-    return current;
   }
 
   startLayerDrag(e, layer) {
@@ -211,6 +190,7 @@ export class EventHandlers {
     let newX = this.dragLayerStartX + deltaX;
     let newY = this.dragLayerStartY + deltaY;
     
+    // Snap to grid if grab tool is active
     if (this.toolManager.shouldSnapToGrid()) {
       newX = this.toolManager.snapToGrid(newX);
     }
@@ -274,10 +254,12 @@ export class EventHandlers {
         break;
     }
 
+    // Enforce minimum dimensions
     const minSize = 20;
     newWidth = Math.max(minSize, newWidth);
     newHeight = Math.max(minSize, newHeight);
 
+    // Snap to grid if needed
     if (this.toolManager.shouldSnapToGrid()) {
       newWidth = this.toolManager.snapToGrid(newWidth);
       if (['sw', 'nw'].includes(this.selectedResizeHandle)) {
@@ -285,11 +267,13 @@ export class EventHandlers {
       }
     }
 
+    // Update position and dimensions while maintaining constraints
     this.currentLayer.element.style.width = `${newWidth}px`;
     this.currentLayer.element.style.height = `${newHeight}px`;
     this.currentLayer.element.style.left = `${currentLeft}px`;
     this.currentLayer.element.style.top = `${currentTop}px`;
 
+    // Update property inputs to reflect new dimensions
     this.propertyManager.updatePropertyInputs();
   }
 }
