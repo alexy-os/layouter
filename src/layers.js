@@ -31,6 +31,7 @@ export class LayerManager {
   }
 
   initLayerSorting() {
+    // Mouse drag events
     this.layerList.addEventListener('dragstart', (e) => {
       if (!e.target.classList.contains('layer-item')) return;
       e.target.classList.add('dragging');
@@ -92,6 +93,96 @@ export class LayerManager {
 
       // Update z-indices to match new order
       this.updateLayerOrder();
+    });
+
+    // Touch events for sorting
+    let touchStartY = 0;
+    let touchedItem = null;
+    let touchStartIndex = -1;
+    let placeholder = null;
+
+    this.layerList.addEventListener('touchstart', (e) => {
+      const item = e.target.closest('.layer-item');
+      if (!item) return;
+
+      touchStartY = e.touches[0].clientY;
+      touchedItem = item;
+      touchStartIndex = Array.from(this.layerList.children).indexOf(item);
+      
+      // Create placeholder
+      placeholder = item.cloneNode(true);
+      placeholder.classList.add('placeholder');
+      placeholder.style.opacity = '0.5';
+      
+      // Style touched item
+      item.classList.add('dragging');
+      item.style.position = 'fixed';
+      item.style.zIndex = '1000';
+      item.style.width = `${item.offsetWidth}px`;
+      item.style.left = `${item.offsetLeft}px`;
+      item.style.top = `${e.touches[0].clientY - item.offsetHeight / 2}px`;
+    });
+
+    this.layerList.addEventListener('touchmove', (e) => {
+      if (!touchedItem) return;
+      e.preventDefault();
+
+      const currentY = e.touches[0].clientY;
+      touchedItem.style.top = `${currentY - touchedItem.offsetHeight / 2}px`;
+
+      // Find the item we're hovering over
+      const hoverItem = Array.from(this.layerList.children)
+        .find(child => {
+          if (child === touchedItem || child === placeholder) return false;
+          const rect = child.getBoundingClientRect();
+          return currentY >= rect.top && currentY <= rect.bottom;
+        });
+
+      if (hoverItem) {
+        const hoverIndex = Array.from(this.layerList.children).indexOf(hoverItem);
+        if (placeholder.parentNode) placeholder.parentNode.removeChild(placeholder);
+        
+        if (hoverIndex > touchStartIndex) {
+          hoverItem.after(placeholder);
+        } else {
+          hoverItem.before(placeholder);
+        }
+      }
+    });
+
+    this.layerList.addEventListener('touchend', () => {
+      if (!touchedItem || !placeholder) return;
+
+      // Get final position
+      const finalIndex = Array.from(this.layerList.children).indexOf(placeholder);
+      
+      // Update layers array
+      if (finalIndex !== -1 && finalIndex !== touchStartIndex) {
+        const [movedLayer] = this.layers.splice(touchStartIndex, 1);
+        this.layers.splice(finalIndex, 0, movedLayer);
+      }
+
+      // Reset touched item style
+      touchedItem.style.position = '';
+      touchedItem.style.zIndex = '';
+      touchedItem.style.width = '';
+      touchedItem.style.left = '';
+      touchedItem.style.top = '';
+      touchedItem.classList.remove('dragging');
+
+      // Replace placeholder with touched item
+      if (placeholder.parentNode) {
+        placeholder.parentNode.replaceChild(touchedItem, placeholder);
+      }
+
+      // Update z-indices
+      this.updateLayerOrder();
+
+      // Reset variables
+      touchStartY = 0;
+      touchedItem = null;
+      touchStartIndex = -1;
+      placeholder = null;
     });
   }
 

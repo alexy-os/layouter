@@ -218,8 +218,9 @@ export class EventHandlers {
     this.currentLayer = this.layerManager.getLayers().find(l => l.element === layer);
     
     const rect = layer.getBoundingClientRect();
-    this.dragStartX = e.clientX;
-    this.dragStartY = e.clientY;
+    // Use clientX/Y for mouse events and touches[0] for touch events
+    this.dragStartX = e.touches ? e.touches[0].clientX : e.clientX;
+    this.dragStartY = e.touches ? e.touches[0].clientY : e.clientY;
     this.dragLayerStartX = rect.width;
     this.dragLayerStartY = rect.height;
     
@@ -229,8 +230,12 @@ export class EventHandlers {
   handleLayerResize(e) {
     if (!this.isResizing || !this.currentLayer) return;
 
-    const deltaX = e.clientX - this.dragStartX;
-    const deltaY = e.clientY - this.dragStartY;
+    // Get current coordinates from either mouse or touch event
+    const currentX = e.touches ? e.touches[0].clientX : e.clientX;
+    const currentY = e.touches ? e.touches[0].clientY : e.clientY;
+
+    const deltaX = currentX - this.dragStartX;
+    const deltaY = currentY - this.dragStartY;
     
     const rect = this.currentLayer.element.getBoundingClientRect();
     const canvasRect = this.canvas.getBoundingClientRect();
