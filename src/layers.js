@@ -7,6 +7,16 @@ export class LayerManager {
     this.initLayerSorting();
     this.nextId = 1;
 
+    // Add container dimensions
+    this.CONTAINER_WIDTH = 1280;
+    this.CONTAINER_HEIGHT = 720; // 16:9 ratio
+
+    // Add visual boundary for the working area
+    const boundary = document.createElement('div');
+    boundary.classList.add('absolute', 'inset-0', 'pointer-events-none', 'border-b-2', 'border-dashed', 'border-gray-300', 'dark:border-gray-700');
+    boundary.style.height = '720px'; // Fixed height for 16:9
+    this.canvas.appendChild(boundary);
+
     // Remove custom width mapping, we'll use direct pixel values
     this.twSizes = {
       '0': '0px',
@@ -359,5 +369,16 @@ export class LayerManager {
       maxZ = Math.max(maxZ, z);
     });
     return maxZ;
+  }
+
+  constrainPosition(x, y, width, height) {
+    // Constrain to container bounds with 16:9 ratio
+    const maxX = this.CONTAINER_WIDTH - width;
+    const maxY = this.CONTAINER_HEIGHT - height;
+    
+    return {
+      x: Math.max(0, Math.min(Math.round(x), maxX)),
+      y: Math.max(0, Math.min(Math.round(y), maxY))
+    };
   }
 }

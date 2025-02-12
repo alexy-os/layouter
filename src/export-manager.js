@@ -76,30 +76,12 @@ export class ExportManager {
   <script>
     tailwind.config = {
       darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            ui: {
-              blue: '#007bff',
-              hover: '#0056b3',
-              gray: '#6c757d',
-              border: {
-                DEFAULT: '#e9ecef',
-                dark: '#2d3748'
-              },
-              bg: {
-                DEFAULT: '#f8f9fa',
-                dark: '#1a202c'
-              }
-            }
-          }
-        }
-      }
+      theme: {}
     }
   </script>
 </head>
 <body class="relative min-h-screen bg-white dark:bg-gray-900">
-  <div class="container mx-auto relative" style="height: 100vh">
+  <div class="container mx-auto relative h-[calc(100vh-4rem)] max-w-4xl">
     ${htmlContent}
   </div>
 </body>
