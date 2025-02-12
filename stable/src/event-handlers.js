@@ -16,8 +16,6 @@ export class EventHandlers {
     this.dragStartY = 0;
     this.dragLayerStartX = 0;
     this.dragLayerStartY = 0;
-    this.dragLayerStartLeft = 0;
-    this.dragLayerStartTop = 0;
     this.initEvents();
   }
 
@@ -39,9 +37,7 @@ export class EventHandlers {
   handleCanvasTouchStart(e) {
     if (e.touches.length === 1) {
       e.preventDefault(); // Prevent scrolling
-      const touch = e.touches[0];
-      touch.originalEvent = e; // Pass the original event
-      this.handleStart(touch);
+      this.handleStart(e.touches[0]);
     }
   }
 
@@ -50,7 +46,7 @@ export class EventHandlers {
     const currentTool = this.toolManager.getCurrentTool();
 
     if (target.classList.contains('resize-handle')) {
-      this.startLayerResize(e, target, e.originalEvent);
+      this.startLayerResize(e, target);
     } else if (target.classList.contains('layer')) {
       // Handle dragging and selection for both rectangle and text
       this.startLayerDrag(e, target);
@@ -214,32 +210,19 @@ export class EventHandlers {
     this.propertyManager.updatePropertyInputs();
   }
 
-  startLayerResize(e, handle, originalEvent) {
-    // Handle event propagation
-    if (originalEvent && originalEvent.preventDefault) {
-      originalEvent.preventDefault();
-      originalEvent.stopPropagation();
-    } else if (e.stopPropagation) {
-      e.stopPropagation();
-    }
-
+  startLayerResize(e, handle) {
+    e.stopPropagation();
     this.isResizing = true;
     this.selectedResizeHandle = handle.dataset.handle;
     const layer = handle.parentElement;
     this.currentLayer = this.layerManager.getLayers().find(l => l.element === layer);
     
     const rect = layer.getBoundingClientRect();
-    const canvasRect = this.canvas.getBoundingClientRect();
-    
     // Use clientX/Y for mouse events and touches[0] for touch events
-    this.dragStartX = e.clientX || (e.touches && e.touches[0].clientX);
-    this.dragStartY = e.clientY || (e.touches && e.touches[0].clientY);
-    
-    // Store initial dimensions and position
+    this.dragStartX = e.touches ? e.touches[0].clientX : e.clientX;
+    this.dragStartY = e.touches ? e.touches[0].clientY : e.clientY;
     this.dragLayerStartX = rect.width;
     this.dragLayerStartY = rect.height;
-    this.dragLayerStartLeft = rect.left - canvasRect.left;
-    this.dragLayerStartTop = rect.top - canvasRect.top;
     
     layer.classList.add('resizing');
   }
@@ -259,8 +242,8 @@ export class EventHandlers {
     
     let newWidth = this.dragLayerStartX;
     let newHeight = this.dragLayerStartY;
-    let currentLeft = this.dragLayerStartLeft;
-    let currentTop = this.dragLayerStartTop;
+    let currentLeft = rect.left - canvasRect.left;
+    let currentTop = rect.top - canvasRect.top;
     
     switch(this.selectedResizeHandle) {
       case 'se':
