@@ -28,7 +28,7 @@ export class ExportManager {
     const layersHtml = this.generateLayersHtml(layers);
 
     return `<!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Exported Layout</title>

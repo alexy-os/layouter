@@ -64,7 +64,7 @@ export class ExportManager {
     const layersHtml = this.generateTailwindLayersHtml(layers);
 
     return `<!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Tailwind Layout</title>

@@ -123,7 +123,6 @@ export class ExportManager {
   }
 
   processColumn(column) {
-    // Filter out highlight classes when exporting
     const columnClasses = Array.from(column.classList)
       .filter(cls => 
         !cls.includes('active') && 
@@ -133,9 +132,12 @@ export class ExportManager {
       )
       .join(' ');
 
-    // Get all non-handle child elements (rectangles and text boxes)
+    // Get all direct child elements (rectangles and text boxes)
     const elements = Array.from(column.children)
-      .filter(child => !child.classList.contains('resize-handle'))
+      .filter(child => 
+        !child.classList.contains('resize-handle') && 
+        !child.classList.contains('temp-rectangle')
+      )
       .map(element => this.processElement(element))
       .filter(html => html) // Remove empty strings/null values
       .join('\n');

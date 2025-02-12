@@ -1,93 +1,110 @@
 # Layouter UI
 
-> ⚠️ **Early Development Warning**
-> 
-> This project is currently in early development and serves as a proof of concept demonstrating that a single rectangle can be the foundation for any layout design. The current functionality differs from the expected final implementation:
-> 
-> - Tools are temporarily separated and require manual activation
-> - Cursor and movement tools must be clicked each time to engage their functionality
-> - In the grid version, column selection is mandatory before drawing
-> 
-> We're working on streamlining these interactions for a more seamless experience.
+> "Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away" - Antoine de Saint-Exupéry
 
-> "Sometimes the most sophisticated solution is the simplest one" - *A British developer, probably*
+## The Most Elegant Approach to UI Design
 
-## What is Layouter?
+Layouter is not just another design tool – it's a philosophical statement about simplicity. While others offer endless toolbars that would make Swiss Army knives blush, we've distilled interface design to its purest essence: a rectangle and some text.
 
-Layouter is an elegantly minimalist design tool that proves you don't need a Swiss Army knife when a proper English pocket knife will do. While Figma and PenPot might offer you the entire art supply shop, we've distilled interface design down to its purest form: the rectangle.
+## The Power of Two
 
-Yes, you read that correctly. One tool. One shape. Infinite possibilities.
+Just as a proper cup of Earl Grey needs only tea and water, Layouter needs only two tools:
 
-*"But how?"* you might ask, adjusting your monocle. Well, let us explain.
+### 🟦 The Rectangle
+The foundation of all interfaces. Think of it as the Lego bricks that built an empire:
+- Buttons? A rectangle with rounded corners
+- Cards? A rectangle with a shadow
+- Headers? A rather wide rectangle
+- Modals? A rectangle that knows how to make an entrance
 
-## The Power of Simplicity
+### 📝 The Text
+Because even the finest architecture needs proper signage:
+- Perfectly positioned
+- Tailwind-powered styling
+- No unnecessary formatting faff
+- Just the essentials: size, alignment, and weight
 
-Just as a proper cup of tea requires only hot water and tea leaves (milk debate aside), Layouter requires only rectangles to create sophisticated interfaces. After all, what is a modern UI if not a thoughtful arrangement of rectangles? Everything else - colours, rounded corners, shadows - is merely garnish on the architectural feast.
+## Tailwind: Our Faithful Butler
 
-## Three Ways to Layout
-
-Like any good British establishment, we offer you three classes of service:
-
-### 🎯 Pure HTML Points
-*For the pixel-perfect perfectionist*
-
-The most direct approach - absolute positioning with precise coordinates. Rather like giving directions in London: "Two pixels right from Oxford Street, 48 pixels down from Piccadilly Circus."
-
+Every rectangle and text element is impeccably dressed in Tailwind utilities:
 ```html
-<div style="position: absolute; left: 42px; top: 42px;">
-  Precisely there, good chap!
+<!-- A properly dressed rectangle -->
+<div class="absolute bg-blue-500 rounded-xl w-48 h-24">
+  <!-- A well-mannered text -->
+  <span class="text-gray-800 text-xl font-bold text-center">
+    Precisely positioned, old chap!
+  </span>
 </div>
 ```
 
-### 🎨 Tailwind Points
-*For the utility-class connoisseur*
+## The BuildY Integration: A Match Made in Mayfair
 
-The same precise positioning, but dressed in Tailwind's finest utility classes. Like ordering your coffee with "tall-42 left-42" instead of giving coordinates.
+Coming soon: A most sophisticated matchmaking service between your rectangles and shadcn/ui components.
 
-```html
-<div class="absolute left-[42px] top-[42px]">
-  Quite dashing, wouldn't you say?
-</div>
-```
+### How It Works
+1. Draw your interface with rectangles
+2. Layouter analyses your composition
+3. BuildY suggests matching shadcn/ui components
+4. You select your favourites with a gentlemanly click
 
-### 📐 Grid System
-*For the architectural enthusiast*
+### The Roadmap
 
-Our most sophisticated approach, featuring proper DOM tree construction with sections, containers, and grids. Rather like planning a proper English garden - everything in its right place, properly structured and perfectly aligned.
+#### Phase 1: The Foundation (Current)
+- ✅ Rectangle and text tools
+- ✅ Drag-and-drop precision
+- ✅ Tailwind utility exports
+- ✅ Dark mode (for those long designers nights)
 
-## Integration with Buildy
+#### Phase 2: The Intelligence (Q2 2025)
+- 🔄 Pattern recognition for common UI elements
+- 🔄 Integration with shadcn/ui component library
+- 🔄 Smart component suggestions
+- 🔄 One-click component favouriting
 
-Here's where things get properly clever: Layouter isn't just a design tool - it's a bridge to implementation. Draw your interface, and Buildy (our companion tool) will match your rectangles with relevant shadcn/ui components faster than you can say "God Save the Queen."
-
-Think of it as having a very efficient butler who knows exactly which component you need based on your architectural sketches.
+#### Phase 3: The Refinement (Q3 2025)
+- 📅 Automatic layout optimization
+- 📅 Component variation suggestions
+- 📅 Theme customization
+- 📅 Export to BuildY projects
 
 ## Getting Started
 
 ```bash
-# Clone the repository (in a very civilised manner)
+# Clone with British precision
 git clone https://github.com/alexy-os/layouter.git
 
-# Enter the premises
+# Enter the establishment
 cd layouter
 
-# Start live server
+# Start the service
+# (No tea will be served, unfortunately)
 ```
 
-## Why Just Rectangles?
+## The Philosophy
 
-As G.K. Chesterton might have said (if he were a UI designer): "The rectangle is not a limitation; it is an opportunity. The rectangle is not a constraint; it is a foundation."
+Why complicate what can be simple? With the approach of true perfectionists:
+- Every interface is a composition of rectangles
+- Every rectangle can be a component
+- Every component should be precisely placed
+- And everything should work together like a well-oiled machine
 
-Consider:
-- A button? A rectangle with rounded corners
-- A card? A rectangle with a shadow
-- A header? A rather wide rectangle
-- A modal? A rectangle with a fancy entrance
-- A sidebar? Oh, you know where this is going
+## The Future
+
+Imagine designing your interface as easily as arranging furniture in a proper English manor:
+1. Draw your layout with rectangles
+2. Add text where needed
+3. Click suggested components
+4. Export to BuildY
+5. Have a cup of tea while your interface assembles itself
 
 ## Contributing
 
-We welcome contributions with the same enthusiasm as a proper British host welcomes guests to afternoon tea. Do mind the coding standards, though - we're not barbarians.
+We welcome contributions with the same enthusiasm as a proper English garden welcomes spring flowers. Do mind the coding standards – we're quite particular about those.
 
 ## License
 
-MIT - As free as speech, not as free as beer (we joke gracefully like the Brits, after all).
+MIT - As free as speech, not as free as tea.
+
+---
+
+*"In simplicity lies the ultimate sophistication" - Leonardo da Vinci (who would have loved Layouter, we're quite certain)*

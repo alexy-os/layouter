@@ -338,7 +338,7 @@ export class LayerManager {
     return null;
   }
 
-  addLayer(element, type = 'unknown') {
+  addLayer(element, type = 'unknown', parentColumn = null) {
     const layerItem = document.createElement('li');
     layerItem.classList.add('layer-item', 'draggable');
     layerItem.draggable = true;
@@ -350,11 +350,13 @@ export class LayerManager {
       'gap-2', 'px-4', 'py-2', 'group'
     );
     
-    // Add proper indentation based on layer type
+    // Add proper indentation based on layer type and parent
     if (type === 'container') {
       layerContainer.classList.add('ml-4');
     } else if (type === 'grid') {
       layerContainer.classList.add('ml-8');
+    } else if (parentColumn) {
+      layerContainer.classList.add('ml-16');
     } else if (type !== 'section') {
       layerContainer.classList.add('ml-12');
     }
@@ -366,19 +368,21 @@ export class LayerManager {
     const icon = this.getLayerIcon(type);
     leftSide.appendChild(icon);
     
-    const text = document.createElement('span');
-    text.textContent = this.getLayerLabel(type);
-    leftSide.appendChild(text);
+    const label = document.createElement('span');
+    label.textContent = this.getLayerLabel(type);
+    leftSide.appendChild(label);
     
     layerContainer.appendChild(leftSide);
 
     // Add edit button
     const editButton = document.createElement('button');
     editButton.classList.add(
-      'edit-btn', 
-      'p-1', 
-      'rounded-md', 
-      'hover:bg-gray-100', 
+      'edit-btn',
+      'opacity-0',
+      'group-hover:opacity-100',
+      'p-1',
+      'rounded-md',
+      'hover:bg-gray-100',
       'dark:hover:bg-gray-700'
     );
     editButton.innerHTML = `
@@ -388,7 +392,6 @@ export class LayerManager {
       </svg>
     `;
     
-    // Add edit button click handler
     editButton.addEventListener('click', (e) => {
       e.stopPropagation();
       const event = new CustomEvent('editLayer', { 
@@ -400,59 +403,41 @@ export class LayerManager {
     layerContainer.appendChild(editButton);
     layerItem.appendChild(layerContainer);
 
-    // Handle section structure
+    // Add element to DOM - специальная обработка для секций
     if (type === 'section') {
-      const sectionContent = document.createElement('div');
-      sectionContent.classList.add('section-content');
-      
-      // Container layer
-      const containerItem = this.createNestedLayerItem('container');
-      sectionContent.appendChild(containerItem);
-      
-      // Layout/grid layer
-      const layoutItem = this.createNestedLayerItem('grid');
-      sectionContent.appendChild(layoutItem);
-      
-      layerItem.appendChild(sectionContent);
-    }
-
-    // Add section highlights with proper spacing and structure
-    if (type === 'section') {
-      element.classList.add('section-highlight', 'w-full');
-      const container = element.querySelector('.container');
-      container.classList.add('container-highlight');
-      const grid = element.querySelector('.grid');
-      grid.classList.add('layout-highlight');
-      
-      // Set background for columns instead of min-height
-      const columns = grid.querySelectorAll('[data-type="column"]');
-      columns.forEach(column => {
-        column.classList.add('bg-gray-50/30', 'dark:bg-gray-800/30');
-      });
-    }
-
-    // Position new section at the bottom
-    if (type === 'section') {
-      const existingSections = this.canvas.querySelectorAll('.section-layer');
-      let yPos = 0;
-      existingSections.forEach(section => {
-        yPos += section.offsetHeight;
-      });
-      element.style.top = `${yPos}px`;
-    }
-
-    if (this.layerList.firstChild) {
-      this.layerList.insertBefore(layerItem, this.layerList.firstChild);
+      this.canvas.appendChild(element);
+    } else if (parentColumn) {
+      parentColumn.appendChild(element);
     } else {
-      this.layerList.appendChild(layerItem);
+      this.canvas.appendChild(element);
+    }
+    
+    // Add to parent column's list if specified, but not for sections
+    if (parentColumn && type !== 'section') {
+      const columnListItem = this.layers.find(l => l.element === parentColumn)?.listItem;
+      if (columnListItem) {
+        let columnContent = columnListItem.querySelector('.column-content');
+        if (!columnContent) {
+          columnContent = document.createElement('ul');
+          columnContent.classList.add('column-content', 'pl-4');
+          columnListItem.appendChild(columnContent);
+        }
+        columnContent.appendChild(layerItem);
+      }
+    } else {
+      // Add to main layer list
+      if (this.layerList.firstChild) {
+        this.layerList.insertBefore(layerItem, this.layerList.firstChild);
+      } else {
+        this.layerList.appendChild(layerItem);
+      }
     }
 
-    this.canvas.appendChild(element);
-    
     const layerData = {
       element,
       listItem: layerItem,
-      type
+      type,
+      parentColumn: type === 'section' ? null : parentColumn // секции не должны иметь родительскую колонку
     };
     
     this.layers.unshift(layerData);
