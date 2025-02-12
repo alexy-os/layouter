@@ -68,6 +68,7 @@
       
       .layer {
         @apply absolute cursor-move select-none transition-colors;
+        touch-action: none;
       }
       
       .layer.selected {
@@ -75,23 +76,24 @@
       }
       
       .resize-handle {
-        @apply absolute w-2 h-2 bg-ui-blue border border-white rounded-full dark:border-gray-800;
+        @apply absolute w-4 h-4 bg-ui-blue border border-white rounded-full dark:border-gray-800;
+        touch-action: none;
       }
 
       .resize-handle.nw {
-        @apply -left-1 -top-1 cursor-nw-resize;
+        @apply -left-2 -top-2 cursor-nw-resize;
       }
 
       .resize-handle.ne {
-        @apply -right-1 -top-1 cursor-ne-resize;
+        @apply -right-2 -top-2 cursor-ne-resize;
       }
 
       .resize-handle.sw {
-        @apply -left-1 -bottom-1 cursor-sw-resize;
+        @apply -left-2 -bottom-2 cursor-sw-resize;
       }
 
       .resize-handle.se {
-        @apply -right-1 -bottom-1 cursor-se-resize;
+        @apply -right-2 -bottom-2 cursor-se-resize;
       }
       
       .theme-toggle {

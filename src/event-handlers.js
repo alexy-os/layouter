@@ -16,29 +16,32 @@ export class EventHandlers {
     this.dragStartY = 0;
     this.dragLayerStartX = 0;
     this.dragLayerStartY = 0;
-    this.initDragEvents();
+    this.initEvents();
   }
 
-  initDragEvents() {
-    document.addEventListener('mousemove', (e) => {
-      if (this.isDragging) {
-        this.handleLayerDrag(e);
-      } else if (this.isResizing) {
-        this.handleLayerResize(e);
-      }
-    });
+  initEvents() {
+    // Mouse events
+    document.addEventListener('mousemove', (e) => this.handleMove(e));
+    document.addEventListener('mouseup', (e) => this.handleEnd(e));
 
-    document.addEventListener('mouseup', () => {
-      this.isDragging = false;
-      this.isResizing = false;
-      this.selectedResizeHandle = null;
-      if (this.currentLayer) {
-        this.currentLayer.element.classList.remove('dragging');
-      }
-    });
+    // Touch events
+    document.addEventListener('touchmove', (e) => this.handleMove(e), { passive: false });
+    document.addEventListener('touchend', (e) => this.handleEnd(e));
+    document.addEventListener('touchcancel', (e) => this.handleEnd(e));
   }
 
   handleCanvasMouseDown(e) {
+    this.handleStart(e);
+  }
+
+  handleCanvasTouchStart(e) {
+    if (e.touches.length === 1) {
+      e.preventDefault(); // Prevent scrolling
+      this.handleStart(e.touches[0]);
+    }
+  }
+
+  handleStart(e) {
     const target = e.target;
     const currentTool = this.toolManager.getCurrentTool();
 
@@ -58,18 +61,26 @@ export class EventHandlers {
     }
   }
 
-  handleCanvasMouseMove(e) {
-    // Only handle drag and resize operations
+  handleMove(e) {
+    // Convert touch event to mouse-like event
+    const event = e.touches ? e.touches[0] : e;
+    if (e.touches) e.preventDefault(); // Prevent scrolling on touch
+
     if (this.isDragging) {
-      this.handleLayerDrag(e);
+      this.handleLayerDrag(event);
     } else if (this.isResizing) {
-      this.handleLayerResize(e);
+      this.handleLayerResize(event);
     }
   }
 
-  handleCanvasMouseUp(e) {
+  handleEnd(e) {
     this.isDragging = false;
     this.isResizing = false;
+    this.selectedResizeHandle = null;
+    if (this.currentLayer) {
+      this.currentLayer.element.classList.remove('dragging');
+      this.currentLayer.element.classList.remove('resizing');
+    }
   }
 
   handleCursorSelection(e) {

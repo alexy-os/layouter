@@ -58,10 +58,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const exportManager = new ExportManager(layerManager);
   
-  // Add event listeners
+  // Add mouse event listeners
   canvas.addEventListener('mousedown', eventHandlers.handleCanvasMouseDown.bind(eventHandlers));
-  canvas.addEventListener('mousemove', eventHandlers.handleCanvasMouseMove.bind(eventHandlers));
-  canvas.addEventListener('mouseup', eventHandlers.handleCanvasMouseUp.bind(eventHandlers));
+
+  // Add touch event listeners
+  canvas.addEventListener('touchstart', eventHandlers.handleCanvasTouchStart.bind(eventHandlers));
+
+  // Prevent default touch behavior to avoid scrolling
+  canvas.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
 
   exportBtn.addEventListener('click', () => {
     exportManager.exportToHtml();
