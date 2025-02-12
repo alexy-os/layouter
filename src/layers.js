@@ -265,20 +265,56 @@ export class LayerManager {
     listItem.dataset.id = layer.dataset.id;
     listItem.setAttribute('draggable', 'true');
     
-    const layerName = document.createElement('span');
-    layerName.textContent = `${name} ${layer.dataset.id}`;
+    // Create container for layer controls
+    const controlsContainer = document.createElement('div');
+    controlsContainer.classList.add('flex', 'items-center', 'gap-2', 'w-full');
     
     // Add drag handle
     const dragHandle = document.createElement('div');
-    dragHandle.classList.add('drag-handle', 'mr-2', 'text-ui-gray');
+    dragHandle.classList.add('drag-handle', 'text-ui-gray');
     dragHandle.innerHTML = `
       <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M4 8h16M4 16h16"></path>
       </svg>
     `;
     
-    listItem.appendChild(dragHandle);
-    listItem.appendChild(layerName);
+    // Add layer name
+    const layerName = document.createElement('span');
+    layerName.classList.add('flex-grow');
+    layerName.textContent = `${name} ${layer.dataset.id}`;
+    
+    // Add lock button
+    const lockButton = document.createElement('button');
+    lockButton.classList.add('lock-button', 'text-ui-gray', 'hover:text-gray-600', 'dark:hover:text-gray-300');
+    lockButton.innerHTML = `
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    `;
+    
+    // Add click handler for lock button
+    lockButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const isLocked = layer.dataset.locked === 'true';
+      layer.dataset.locked = (!isLocked).toString();
+      
+      // Update button appearance
+      if (!isLocked) {
+        lockButton.classList.add('text-blue-500');
+        lockButton.classList.remove('text-ui-gray');
+      } else {
+        lockButton.classList.remove('text-blue-500');
+        lockButton.classList.add('text-ui-gray');
+      }
+    });
+    
+    // Assemble controls
+    controlsContainer.appendChild(dragHandle);
+    controlsContainer.appendChild(layerName);
+    controlsContainer.appendChild(lockButton);
+    listItem.appendChild(controlsContainer);
     
     // Insert at the beginning for proper z-index ordering
     if (this.layerList.firstChild) {

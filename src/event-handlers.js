@@ -179,8 +179,13 @@ export class EventHandlers {
   }
 
   startLayerDrag(e, layer) {
-    // Don't start drag if we're editing text
+    // Don't start drag if we're editing text or layer is locked
     if (layer.dataset.type === 'text' && document.activeElement === layer) {
+      return;
+    }
+    
+    // Don't start drag if layer is locked
+    if (layer.dataset.locked === 'true') {
       return;
     }
 
@@ -215,6 +220,13 @@ export class EventHandlers {
   }
 
   startLayerResize(e, handle, originalEvent) {
+    const layer = handle.parentElement;
+    
+    // Don't start resize if layer is locked
+    if (layer.dataset.locked === 'true') {
+      return;
+    }
+    
     // Handle event propagation
     if (originalEvent && originalEvent.preventDefault) {
       originalEvent.preventDefault();
@@ -225,7 +237,6 @@ export class EventHandlers {
 
     this.isResizing = true;
     this.selectedResizeHandle = handle.dataset.handle;
-    const layer = handle.parentElement;
     this.currentLayer = this.layerManager.getLayers().find(l => l.element === layer);
     
     const rect = layer.getBoundingClientRect();
