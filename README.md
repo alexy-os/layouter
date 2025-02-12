@@ -37,9 +37,9 @@ Every rectangle and text element is impeccably dressed in Tailwind utilities:
 </div>
 ```
 
-## The BuildY Integration: A Match Made in Mayfair
+## The BuildY Integration: a match made with love for HinddY
 
-Coming soon: A most sophisticated matchmaking service between your rectangles and shadcn/ui components.
+Coming soon: Clever algorithms to pick shadcn/ui blocks right while drawing your rectangles in Layouter.
 
 ### How It Works
 1. Draw your interface with rectangles
@@ -55,13 +55,13 @@ Coming soon: A most sophisticated matchmaking service between your rectangles an
 - ✅ Tailwind utility exports
 - ✅ Dark mode (for those long designers nights)
 
-#### Phase 2: The Intelligence (Q2 2025)
+#### Phase 2: The Intelligence (Q1 2025)
 - 🔄 Pattern recognition for common UI elements
 - 🔄 Integration with shadcn/ui component library
 - 🔄 Smart component suggestions
 - 🔄 One-click component favouriting
 
-#### Phase 3: The Refinement (Q3 2025)
+#### Phase 3: The Refinement (Q2 2025)
 - 📅 Automatic layout optimization
 - 📅 Component variation suggestions
 - 📅 Theme customization
