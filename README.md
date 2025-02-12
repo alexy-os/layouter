@@ -1,5 +1,13 @@
 # Layouter UI
 
+> ⚠️ **IMPORTANT NOTICE**
+> 
+> The constructor is in the active development stage. Please note the following features:
+> - The final export and proportions of elements directly depend on the screen size used for development
+> - For correct operation, it is recommended to use a screen of at least 1024px (lg)
+> - Changes in the operation of tools and export mechanics are possible
+> - The current version is intended for testing and feedback collection
+
 > "Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away" - Antoine de Saint-Exupéry
 
 ## The Most Elegant Approach to UI Design
