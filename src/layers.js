@@ -426,4 +426,18 @@ export class LayerManager {
       y: Math.max(0, Math.min(Math.round(y), maxY))
     };
   }
+
+  clearLayers() {
+    // Remove all layers from DOM
+    this.layers.forEach(layer => {
+      this.canvas.removeChild(layer.element);
+      this.layerList.removeChild(layer.listItem);
+    });
+    
+    // Clear layers array
+    this.layers = [];
+    
+    // Reset next ID
+    this.nextId = 1;
+  }
 }
