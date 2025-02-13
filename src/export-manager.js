@@ -81,7 +81,7 @@ export class ExportManager {
   </script>
 </head>
 <body class="relative min-h-screen bg-white dark:bg-gray-900">
-  <div class="container mx-auto relative h-[calc(100vh-4rem)] max-w-4xl">
+  <div class="container mx-auto relative h-[calc(100vh)] max-w-[902px]">
     ${htmlContent}
   </div>
 </body>
