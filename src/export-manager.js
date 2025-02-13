@@ -101,11 +101,11 @@ export class ExportManager {
     const rect = element.getBoundingClientRect();
     const canvas = this.layerManager.canvas.getBoundingClientRect();
     
-    // Calculate percentage positions
-    const left = ((rect.left - canvas.left) / canvas.width * 100).toFixed(2);
-    const top = ((rect.top - canvas.top) / canvas.height * 100).toFixed(2);
-    const width = (rect.width / canvas.width * 100).toFixed(2);
-    const height = (rect.height / canvas.height * 100).toFixed(2);
+    // Calculate pixel positions based on container dimensions
+    const left = Math.round((rect.left - canvas.left) / canvas.width * this.layerManager.CONTAINER_WIDTH);
+    const top = Math.round((rect.top - canvas.top) / canvas.height * this.layerManager.CONTAINER_HEIGHT);
+    const width = Math.round(rect.width / canvas.width * this.layerManager.CONTAINER_WIDTH);
+    const height = Math.round(rect.height / canvas.height * this.layerManager.CONTAINER_HEIGHT);
     
     // Get background color class
     const bgClass = Array.from(element.classList)
@@ -116,19 +116,18 @@ export class ExportManager {
       .find(cls => cls.startsWith('rounded-')) || '';
     
     return `
-    <div class="absolute ${bgClass} ${roundedClass}"
-         style="left: ${left}%; top: ${top}%; width: ${width}%; height: ${height}%;"></div>`;
+    <div class="absolute ${bgClass} ${roundedClass} left-[${left}px] top-[${top}px] w-[${width}px] h-[${height}px]"></div>`;
   }
 
   exportText(element) {
     const rect = element.getBoundingClientRect();
     const canvas = this.layerManager.canvas.getBoundingClientRect();
     
-    // Calculate percentage positions
-    const left = ((rect.left - canvas.left) / canvas.width * 100).toFixed(2);
-    const top = ((rect.top - canvas.top) / canvas.height * 100).toFixed(2);
-    const width = (rect.width / canvas.width * 100).toFixed(2);
-    const height = (rect.height / canvas.height * 100).toFixed(2);
+    // Calculate pixel positions based on container dimensions
+    const left = Math.round((rect.left - canvas.left) / canvas.width * this.layerManager.CONTAINER_WIDTH);
+    const top = Math.round((rect.top - canvas.top) / canvas.height * this.layerManager.CONTAINER_HEIGHT);
+    const width = Math.round(rect.width / canvas.width * this.layerManager.CONTAINER_WIDTH);
+    const height = Math.round(rect.height / canvas.height * this.layerManager.CONTAINER_HEIGHT);
     
     // Get text content
     const content = element.textContent;
@@ -139,8 +138,7 @@ export class ExportManager {
       .join(' ');
     
     return `
-    <div class="absolute ${classes}"
-         style="left: ${left}%; top: ${top}%; width: ${width}%; height: ${height}%;">
+    <div class="absolute ${classes} left-[${left}px] top-[${top}px] w-[${width}px] h-[${height}px]">
       ${content}
     </div>`;
   }
