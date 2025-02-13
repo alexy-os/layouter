@@ -174,6 +174,10 @@ export class PropertyManager {
         <option value="form">Form</option>
         <option value="button">Button</option>
         <option value="widget">Widget</option>
+        <option value="video">Video</option>
+        <option value="navbar">Navbar</option>
+        <option value="footer">Footer</option>
+        <option value="sidebar">Sidebar</option>
       </select>
     `;
 
@@ -225,8 +229,8 @@ export class PropertyManager {
         <option value="h1">Heading H1</option>
         <option value="h2">Heading H2</option>
         <option value="h3">Heading H3</option>
-        <option value="blockquote">Blockquote</option>
         <option value="paragraph">Paragraph</option>
+        <option value="blockquote">Blockquote</option>
       </select>
     `;
 

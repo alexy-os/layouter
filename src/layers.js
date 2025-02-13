@@ -206,7 +206,7 @@ export class LayerManager {
     });
   }
 
-  createRectangleLayer(x, y, width, height, borderRadius = 'xl') {
+  createRectangleLayer(x, y, width, height, borderRadius = 'none') {
     const layer = document.createElement('div');
     layer.classList.add('layer');
     layer.dataset.type = 'rectangle';
@@ -219,7 +219,7 @@ export class LayerManager {
     layer.style.height = `${height}px`;
     
     // Add default styling
-    layer.classList.add('bg-blue-500');
+    layer.classList.add('bg-blue-600');
     layer.classList.add(`rounded-${borderRadius}`);
     
     // Add resize handles by default
@@ -242,13 +242,13 @@ export class LayerManager {
     
     layer.contentEditable = true;
     layer.classList.add(
-      'text-gray-800',
+      //'text-gray-800',
       'text-base',
       'focus:outline-none',
-      'dark:text-gray-200'
+      //'dark:text-gray-200'
     );
     
-    layer.textContent = 'Введите текст';
+    layer.textContent = 'The Title';
     
     // Add resize handles
     this.addResizeHandles(layer);
