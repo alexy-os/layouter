@@ -4,10 +4,13 @@ import { ToolManager } from './src/tool-manager.js';
 import { PropertyManager } from './src/property-manager.js';
 import { ExportManager } from './src/export-manager.js';
 import { ThemeManager } from './src/theme-manager.js';
+import { ValidationController } from './src/validation-controller.js';
+import { RegistryManager } from './src/registry-manager.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Initialize theme manager first
+  // Initialize managers
   const themeManager = new ThemeManager();
+  const registryManager = new RegistryManager();
   
   const canvas = document.getElementById('canvas');
   const layerList = document.getElementById('layerList');
@@ -26,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const themeToggleBtn = document.getElementById('themeToggleBtn');
 
   // Instantiate managers in the correct order
-  const layerManager = new LayerManager(canvas, layerList);
+  const layerManager = new LayerManager(canvas, layerList, registryManager);
   const toolManager = new ToolManager(
     rectangleBtn, 
     textBtn, 
@@ -44,7 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
     width, 
     height, 
     layerManager,
-    toolManager
+    toolManager,
+    registryManager
   );
   
   toolManager.propertyManager = propertyManager;
@@ -56,8 +60,9 @@ document.addEventListener('DOMContentLoaded', () => {
     propertyManager
   );
 
-  const exportManager = new ExportManager(layerManager);
-  
+  const exportManager = new ExportManager(layerManager, registryManager);
+  const validationController = new ValidationController(layerManager, registryManager);
+
   // Add mouse event listeners
   canvas.addEventListener('mousedown', eventHandlers.handleCanvasMouseDown.bind(eventHandlers));
 
@@ -68,7 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
   canvas.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
 
   exportBtn.addEventListener('click', () => {
-    exportManager.exportToHtml();
+    if (validationController.validateLayers()) {
+      exportManager.exportToHtml();
+    }
   });
 
   themeToggleBtn.addEventListener('click', () => {

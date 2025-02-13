@@ -8,7 +8,8 @@ export class PropertyManager {
     width, 
     height, 
     layerManager,
-    toolManager
+    toolManager,
+    registryManager
   ) {
     this.canvas = canvas;
     this.colorPicker = colorPicker;
@@ -19,6 +20,7 @@ export class PropertyManager {
     this.height = height;
     this.layerManager = layerManager;
     this.toolManager = toolManager;
+    this.registryManager = registryManager;
     this.selectedLayer = null;
 
     // Define Tailwind border radius values
@@ -92,9 +94,10 @@ export class PropertyManager {
       height: '100px'
     };
 
-    this.initColorPicker();
-    this.initBorderRadius();
-    this.initPositionInputs();
+    // Initialize in the correct order
+    if (this.colorPicker) this.initColorPicker();
+    if (this.borderRadius) this.initBorderRadius();
+    if (this.posX && this.posY && this.width && this.height) this.initPositionInputs();
     this.initTextProperties();
   }
 
@@ -160,20 +163,50 @@ export class PropertyManager {
   }
 
   initPositionInputs() {
-    [this.posX, this.posY, this.width, this.height].forEach(input => {
-      input.addEventListener('change', () => {
+    // Add layer type selector for rectangles
+    const layerTypeContainer = document.createElement('div');
+    layerTypeContainer.classList.add('flex', 'items-center', 'gap-2', 'mb-4');
+    layerTypeContainer.innerHTML = `
+      <label class="text-sm text-ui-gray dark:text-gray-400">Layer Type</label>
+      <select id="layerType" class="w-full px-2 py-1 border border-ui-border rounded-md text-sm dark:bg-gray-800 dark:border-ui-border-dark">
+        <option value="">Select type...</option>
+        <option value="image">Image</option>
+        <option value="form">Form</option>
+        <option value="button">Button</option>
+        <option value="widget">Widget</option>
+      </select>
+    `;
+
+    // Add to properties panel before position inputs
+    const propertiesPanel = this.posX.closest('.space-y-4');
+    propertiesPanel.insertBefore(layerTypeContainer, propertiesPanel.firstChild);
+
+    // Add event listeners after elements are created
+    const layerType = document.getElementById('layerType');
+    if (layerType) {
+      layerType.addEventListener('change', () => {
         if (!this.selectedLayer) return;
-        
-        const x = parseInt(this.posX.value) || 0;
-        const y = parseInt(this.posY.value) || 0;
-        const w = parseInt(this.width.value) || 100;
-        const h = parseInt(this.height.value) || 100;
-        
-        this.selectedLayer.style.left = `${x}px`;
-        this.selectedLayer.style.top = `${y}px`;
-        this.selectedLayer.style.width = `${w}px`;
-        this.selectedLayer.style.height = `${h}px`;
+        this.registryManager.setLayerType(this.selectedLayer.dataset.id, layerType.value);
       });
+    }
+
+    // Position input listeners
+    [this.posX, this.posY, this.width, this.height].forEach(input => {
+      if (input) {
+        input.addEventListener('change', () => {
+          if (!this.selectedLayer) return;
+          
+          const x = parseInt(this.posX.value) || 0;
+          const y = parseInt(this.posY.value) || 0;
+          const w = parseInt(this.width.value) || 100;
+          const h = parseInt(this.height.value) || 100;
+          
+          this.selectedLayer.style.left = `${x}px`;
+          this.selectedLayer.style.top = `${y}px`;
+          this.selectedLayer.style.width = `${w}px`;
+          this.selectedLayer.style.height = `${h}px`;
+        });
+      }
     });
   }
 
@@ -182,6 +215,20 @@ export class PropertyManager {
     const container = document.createElement('div');
     container.id = 'textProperties';
     container.classList.add('hidden', 'space-y-4', 'mt-4');
+
+    // Text type selector
+    const typeContainer = document.createElement('div');
+    typeContainer.innerHTML = `
+      <label class="text-sm text-ui-gray dark:text-gray-400">Text Type</label>
+      <select id="textType" class="w-full px-2 py-1 border border-ui-border rounded-md text-sm dark:bg-gray-800 dark:border-ui-border-dark">
+        <option value="">Select type...</option>
+        <option value="h1">Heading H1</option>
+        <option value="h2">Heading H2</option>
+        <option value="h3">Heading H3</option>
+        <option value="blockquote">Blockquote</option>
+        <option value="paragraph">Paragraph</option>
+      </select>
+    `;
 
     // Text size selector
     const sizeContainer = document.createElement('div');
@@ -224,6 +271,7 @@ export class PropertyManager {
       </div>
     `;
 
+    container.appendChild(typeContainer);
     container.appendChild(sizeContainer);
     container.appendChild(alignContainer);
     container.appendChild(formatContainer);
@@ -232,55 +280,71 @@ export class PropertyManager {
     const propertiesPanel = this.colorPicker.closest('.space-y-4');
     propertiesPanel.appendChild(container);
 
-    // Add event listeners
+    // Add event listeners after elements are created
+    const textType = document.getElementById('textType');
     const textSize = document.getElementById('textSize');
     const textAlign = document.getElementById('textAlign');
     const textBold = document.getElementById('textBold');
     const textItalic = document.getElementById('textItalic');
 
-    textSize.addEventListener('change', () => {
-      if (!this.selectedLayer || this.selectedLayer.dataset.type !== 'text') return;
-      
-      // Remove old size class
-      const oldSizeClass = Array.from(this.selectedLayer.classList)
-        .find(cls => /^text-(xs|sm|base|lg|xl|2xl|3xl)$/.test(cls));
-      if (oldSizeClass) {
-        this.selectedLayer.classList.remove(oldSizeClass);
-      }
-      
-      this.selectedLayer.classList.add(textSize.value);
-    });
+    if (textType) {
+      textType.addEventListener('change', () => {
+        if (!this.selectedLayer || this.selectedLayer.dataset.type !== 'text') return;
+        this.registryManager.setLayerType(this.selectedLayer.dataset.id, textType.value);
+      });
+    }
 
-    textAlign.addEventListener('change', () => {
-      if (!this.selectedLayer || this.selectedLayer.dataset.type !== 'text') return;
-      
-      // Remove old alignment class
-      const oldAlignClass = Array.from(this.selectedLayer.classList)
-        .find(cls => /^text-(left|center|right|justify)$/.test(cls));
-      if (oldAlignClass) {
-        this.selectedLayer.classList.remove(oldAlignClass);
-      }
-      
-      this.selectedLayer.classList.add(textAlign.value);
-    });
+    if (textSize) {
+      textSize.addEventListener('change', () => {
+        if (!this.selectedLayer || this.selectedLayer.dataset.type !== 'text') return;
+        
+        // Remove old size class
+        const oldSizeClass = Array.from(this.selectedLayer.classList)
+          .find(cls => /^text-(xs|sm|base|lg|xl|2xl|3xl)$/.test(cls));
+        if (oldSizeClass) {
+          this.selectedLayer.classList.remove(oldSizeClass);
+        }
+        
+        this.selectedLayer.classList.add(textSize.value);
+      });
+    }
 
-    textBold.addEventListener('change', () => {
-      if (!this.selectedLayer || this.selectedLayer.dataset.type !== 'text') return;
-      if (textBold.checked) {
-        this.selectedLayer.classList.add('font-bold');
-      } else {
-        this.selectedLayer.classList.remove('font-bold');
-      }
-    });
+    if (textAlign) {
+      textAlign.addEventListener('change', () => {
+        if (!this.selectedLayer || this.selectedLayer.dataset.type !== 'text') return;
+        
+        // Remove old alignment class
+        const oldAlignClass = Array.from(this.selectedLayer.classList)
+          .find(cls => /^text-(left|center|right|justify)$/.test(cls));
+        if (oldAlignClass) {
+          this.selectedLayer.classList.remove(oldAlignClass);
+        }
+        
+        this.selectedLayer.classList.add(textAlign.value);
+      });
+    }
 
-    textItalic.addEventListener('change', () => {
-      if (!this.selectedLayer || this.selectedLayer.dataset.type !== 'text') return;
-      if (textItalic.checked) {
-        this.selectedLayer.classList.add('italic');
-      } else {
-        this.selectedLayer.classList.remove('italic');
-      }
-    });
+    if (textBold) {
+      textBold.addEventListener('change', () => {
+        if (!this.selectedLayer || this.selectedLayer.dataset.type !== 'text') return;
+        if (textBold.checked) {
+          this.selectedLayer.classList.add('font-bold');
+        } else {
+          this.selectedLayer.classList.remove('font-bold');
+        }
+      });
+    }
+
+    if (textItalic) {
+      textItalic.addEventListener('change', () => {
+        if (!this.selectedLayer || this.selectedLayer.dataset.type !== 'text') return;
+        if (textItalic.checked) {
+          this.selectedLayer.classList.add('italic');
+        } else {
+          this.selectedLayer.classList.remove('italic');
+        }
+      });
+    }
   }
 
   selectLayer(layer) {
@@ -298,11 +362,26 @@ export class PropertyManager {
     
     // Show/hide text properties
     const textProperties = document.getElementById('textProperties');
+    const layerType = document.getElementById('layerType');
+    const textType = document.getElementById('textType');
+
+    // Reset type selectors to empty state
+    if (layerType) layerType.value = '';
+    if (textType) textType.value = '';
+
     if (layer.dataset.type === 'text') {
       textProperties.classList.remove('hidden');
       this.updateTextProperties(layer);
+      // Get saved text type if exists
+      if (textType) {
+        textType.value = this.registryManager.getLayerType(layer.dataset.id) || '';
+      }
     } else {
       textProperties.classList.add('hidden');
+      // Get saved layer type if exists
+      if (layerType) {
+        layerType.value = this.registryManager.getLayerType(layer.dataset.id) || '';
+      }
     }
   }
 

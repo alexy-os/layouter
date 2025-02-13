@@ -1,6 +1,7 @@
 export class ExportManager {
-  constructor(layerManager) {
+  constructor(layerManager, registryManager) {
     this.layerManager = layerManager;
+    this.registryManager = registryManager;
     
     // Define Tailwind color mappings for common colors
     this.tailwindColors = {
@@ -81,7 +82,7 @@ export class ExportManager {
   </script>
 </head>
 <body class="relative min-h-screen bg-white dark:bg-gray-900">
-  <div class="container mx-auto relative h-[calc(100vh)] max-w-[902px]">
+  <div class="container mx-auto relative h-[calc(100vh)] max-w-4xl">
     ${htmlContent}
   </div>
 </body>
@@ -114,9 +115,12 @@ export class ExportManager {
     // Get border radius class
     const roundedClass = Array.from(element.classList)
       .find(cls => cls.startsWith('rounded-')) || '';
+
+    // Get layer type from registry
+    const layerType = this.registryManager.getLayerType(element.dataset.id);
     
     return `
-    <div class="absolute ${bgClass} ${roundedClass} left-[${left}px] top-[${top}px] w-[${width}px] h-[${height}px]"></div>`;
+    <div class="absolute ${bgClass} ${roundedClass} left-[${left}px] top-[${top}px] w-[${width}px] h-[${height}px]" layer="${layerType}"></div>`;
   }
 
   exportText(element) {
@@ -136,9 +140,12 @@ export class ExportManager {
     const classes = Array.from(element.classList)
       .filter(cls => !['layer', 'selected'].includes(cls))
       .join(' ');
+
+    // Get layer type from registry
+    const layerType = this.registryManager.getLayerType(element.dataset.id);
     
     return `
-    <div class="absolute ${classes} left-[${left}px] top-[${top}px] w-[${width}px] h-[${height}px]">
+    <div class="absolute ${classes} left-[${left}px] top-[${top}px] w-[${width}px] h-[${height}px]" layer="${layerType}">
       ${content}
     </div>`;
   }

@@ -1,21 +1,21 @@
 export class LayerManager {
-  constructor(canvas, layerList) {
+  constructor(canvas, layerList, registryManager) {
     this.canvas = canvas;
     this.layerList = layerList;
     this.layers = [];
     this.currentLayer = null;
+    this.registryManager = registryManager;
     this.initLayerSorting();
     this.nextId = 1;
 
     // Add container dimensions
-    this.CONTAINER_WIDTH = 902;
-    this.CONTAINER_HEIGHT = 598
+    this.CONTAINER_WIDTH = 896;
+    this.CONTAINER_HEIGHT = 548;
 
     // Add visual boundary for the working area
     const boundary = document.createElement('div');
-    boundary.classList.add('absolute', 'inset-0', 'pointer-events-none', 'border-2', 'border-dashed', 'border-gray-300', 'dark:border-gray-700');
-    boundary.style.height = '598px';
-    boundary.style.width = '902px';
+    boundary.classList.add('absolute', 'inset-0', 'pointer-events-none', 'border-b-2', 'border-dashed', 'border-gray-300', 'dark:border-gray-700');
+    boundary.style.height = '548px';
     this.canvas.appendChild(boundary);
 
     // Remove custom width mapping, we'll use direct pixel values
@@ -343,6 +343,11 @@ export class LayerManager {
     // Insert at beginning of layers array and update z-indices
     this.layers.unshift(layerData);
     this.updateLayerOrder();
+
+    // Register layer with empty type
+    if (this.registryManager) {
+      this.registryManager.setLayerType(layer.dataset.id, '');
+    }
     
     return layerData;
   }
