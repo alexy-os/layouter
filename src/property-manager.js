@@ -95,10 +95,19 @@ export class PropertyManager {
     };
 
     // Initialize in the correct order
-    if (this.colorPicker) this.initColorPicker();
-    if (this.borderRadius) this.initBorderRadius();
-    if (this.posX && this.posY && this.width && this.height) this.initPositionInputs();
-    this.initTextProperties();
+    this.initializeComponents();
+  }
+
+  initializeComponents() {
+    // Wait for DOM to be ready
+    requestAnimationFrame(() => {
+      if (this.colorPicker) this.initColorPicker();
+      if (this.borderRadius) this.initBorderRadius();
+      if (this.posX && this.posY && this.width && this.height) {
+        this.initPositionInputs();
+        this.initTextProperties();
+      }
+    });
   }
 
   initColorPicker() {
@@ -163,12 +172,15 @@ export class PropertyManager {
   }
 
   initPositionInputs() {
+    const propertiesPanel = this.posX.closest('.space-y-3');
+    if (!propertiesPanel) return;
+
     // Add layer type selector for rectangles
     const layerTypeContainer = document.createElement('div');
     layerTypeContainer.classList.add('flex', 'items-center', 'gap-2', 'mb-4');
     layerTypeContainer.innerHTML = `
-      <label class="text-sm text-ui-gray dark:text-gray-400">Layer Type</label>
-      <select id="layerType" class="w-full px-2 py-1 border border-ui-border rounded-md text-sm dark:bg-gray-800 dark:border-ui-border-dark">
+      <label class="text-xs text-ui-gray dark:text-gray-400">Layer Type</label>
+      <select id="layerType" class="w-full px-2 py-1 border border-ui-border rounded text-xs dark:bg-gray-800 dark:border-ui-border-dark">
         <option value="">Select type...</option>
         <option value="image">Image</option>
         <option value="form">Form</option>
@@ -181,8 +193,7 @@ export class PropertyManager {
       </select>
     `;
 
-    // Add to properties panel before position inputs
-    const propertiesPanel = this.posX.closest('.space-y-4');
+    // Insert at beginning of properties panel
     propertiesPanel.insertBefore(layerTypeContainer, propertiesPanel.firstChild);
 
     // Add event listeners after elements are created
@@ -218,13 +229,13 @@ export class PropertyManager {
     // Create text properties container
     const container = document.createElement('div');
     container.id = 'textProperties';
-    container.classList.add('hidden', 'space-y-4', 'mt-4');
+    container.classList.add('hidden', 'space-y-3', 'mt-3');
 
     // Text type selector
     const typeContainer = document.createElement('div');
     typeContainer.innerHTML = `
-      <label class="text-sm text-ui-gray dark:text-gray-400">Text Type</label>
-      <select id="textType" class="w-full px-2 py-1 border border-ui-border rounded-md text-sm dark:bg-gray-800 dark:border-ui-border-dark">
+      <label class="text-xs text-ui-gray dark:text-gray-400">Text Type</label>
+      <select id="textType" class="w-full px-2 py-1 border border-ui-border rounded text-xs dark:bg-gray-800 dark:border-ui-border-dark">
         <option value="">Select type...</option>
         <option value="h1">Heading H1</option>
         <option value="h2">Heading H2</option>
@@ -237,8 +248,8 @@ export class PropertyManager {
     // Text size selector
     const sizeContainer = document.createElement('div');
     sizeContainer.innerHTML = `
-      <label class="text-sm text-ui-gray dark:text-gray-400">Text Size</label>
-      <select id="textSize" class="w-full px-2 py-1 border border-ui-border rounded-md text-sm dark:bg-gray-800 dark:border-ui-border-dark">
+      <label class="text-xs text-ui-gray dark:text-gray-400">Text Size</label>
+      <select id="textSize" class="w-full px-2 py-1 border border-ui-border rounded text-xs dark:bg-gray-800 dark:border-ui-border-dark">
         <option value="text-xs">Extra Small</option>
         <option value="text-sm">Small</option>
         <option value="text-base" selected>Base</option>
@@ -252,8 +263,8 @@ export class PropertyManager {
     // Text alignment
     const alignContainer = document.createElement('div');
     alignContainer.innerHTML = `
-      <label class="text-sm text-ui-gray dark:text-gray-400">Alignment</label>
-      <select id="textAlign" class="w-full px-2 py-1 border border-ui-border rounded-md text-sm dark:bg-gray-800 dark:border-ui-border-dark">
+      <label class="text-xs text-ui-gray dark:text-gray-400">Alignment</label>
+      <select id="textAlign" class="w-full px-2 py-1 border border-ui-border rounded text-xs dark:bg-gray-800 dark:border-ui-border-dark">
         <option value="text-left" selected>Left</option>
         <option value="text-center">Center</option>
         <option value="text-right">Right</option>
@@ -264,7 +275,7 @@ export class PropertyManager {
     // Text formatting
     const formatContainer = document.createElement('div');
     formatContainer.innerHTML = `
-      <label class="text-sm text-ui-gray dark:text-gray-400">Format</label>
+      <label class="text-xs text-ui-gray dark:text-gray-400">Format</label>
       <div class="flex gap-2 mt-1">
         <label class="flex items-center">
           <input type="checkbox" id="textBold" class="mr-1"> Bold
@@ -280,11 +291,17 @@ export class PropertyManager {
     container.appendChild(alignContainer);
     container.appendChild(formatContainer);
 
-    // Add to properties panel
-    const propertiesPanel = this.colorPicker.closest('.space-y-4');
-    propertiesPanel.appendChild(container);
+    // Find properties panel and append container
+    const propertiesPanel = this.posX?.closest('.space-y-3');
+    if (propertiesPanel) {
+      propertiesPanel.appendChild(container);
 
-    // Add event listeners after elements are created
+      // Add event listeners after elements are created
+      this.initTextEventListeners();
+    }
+  }
+
+  initTextEventListeners() {
     const textType = document.getElementById('textType');
     const textSize = document.getElementById('textSize');
     const textAlign = document.getElementById('textAlign');
@@ -352,6 +369,8 @@ export class PropertyManager {
   }
 
   selectLayer(layer) {
+    if (!layer) return;
+
     // Deselect previous layer
     if (this.selectedLayer) {
       this.selectedLayer.classList.remove('selected');
@@ -369,8 +388,10 @@ export class PropertyManager {
     const layerType = document.getElementById('layerType');
     const textType = document.getElementById('textType');
 
+    if (!textProperties || !layerType) return;
+
     // Reset type selectors to empty state
-    if (layerType) layerType.value = '';
+    layerType.value = '';
     if (textType) textType.value = '';
 
     if (layer.dataset.type === 'text') {
@@ -383,9 +404,7 @@ export class PropertyManager {
     } else {
       textProperties.classList.add('hidden');
       // Get saved layer type if exists
-      if (layerType) {
-        layerType.value = this.registryManager.getLayerType(layer.dataset.id) || '';
-      }
+      layerType.value = this.registryManager.getLayerType(layer.dataset.id) || '';
     }
   }
 
@@ -397,7 +416,9 @@ export class PropertyManager {
     
     // Hide text properties
     const textProperties = document.getElementById('textProperties');
-    textProperties.classList.add('hidden');
+    if (textProperties) {
+      textProperties.classList.add('hidden');
+    }
   }
 
   updatePropertyInputs() {

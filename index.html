@@ -5,7 +5,8 @@
   <meta name="description" content="Layouter is a Tailwind CSS-based tool for creating UI prototypes. It allows you to quickly create and customize UI components using a drag-and-drop interface.">
   <meta name="keywords" content="Tailwind CSS, UI prototyping, HTML, CSS, JavaScript">
   <meta name="author" content="Layouter">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" type="image/svg+xml"
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml"
   href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NyA0MCIgZmlsbD0iIzBlYTVlOSI+DQogICAgPHBhdGggZD0iTTIzLjUgNi41QzE3LjUgNi41IDEzLjc1IDkuNSAxMi4yNSAxNS41QzE0LjUgMTIuNSAxNy4xMjUgMTEuMzc1IDIwLjEyNSAxMi4xMjVDMjEuODM2NyAxMi41NTI5IDIzLjA2MDEgMTMuNzk0NyAyNC40MTQyIDE1LjE2OTJDMjYuNjIwMiAxNy40MDg0IDI5LjE3MzQgMjAgMzQuNzUgMjBDNDAuNzUgMjAgNDQuNSAxNyA0NiAxMUM0My43NSAxNCA0MS4xMjUgMTUuMTI1IDM4LjEyNSAxNC4zNzVDMzYuNDEzMyAxMy45NDcxIDM1LjE4OTkgMTIuNzA1MyAzMy44MzU3IDExLjMzMDhDMzEuNjI5NyA5LjA5MTU4IDI5LjA3NjYgNi41IDIzLjUgNi41Wk0xMi4yNSAyMEM2LjI1IDIwIDIuNSAyMyAxIDI5QzMuMjUgMjYgNS44NzUgMjQuODc1IDguODc1IDI1LjYyNUMxMC41ODY3IDI2LjA1MjkgMTEuODEwMSAyNy4yOTQ3IDEzLjE2NDIgMjguNjY5M0MxNS4zNzAyIDMwLjkwODQgMTcuOTIzNCAzMy41IDIzLjUgMzMuNUMyOS41IDMzLjUgMzMuMjUgMzAuNSAzNC43NSAyNC41QzMyLjUgMjcuNSAyOS44NzUgMjguNjI1IDI2Ljg3NSAyNy44NzVDMjUuMTYzMyAyNy40NDcxIDIzLjkzOTkgMjYuMjA1MyAyMi41ODU4IDI0LjgzMDdDMjAuMzc5OCAyMi41OTE2IDE3LjgyNjYgMjAgMTIuMjUgMjBaIj48L3BhdGg+DQo8L3N2Zz4=" />
   
   <!-- Tailwind CSS CDN -->
@@ -41,13 +42,13 @@
   <style type="text/tailwindcss">
     @layer base {
       body {
-        @apply font-sans antialiased text-gray-800 bg-ui-bg dark:bg-ui-bg-dark dark:text-gray-200;
+        @apply font-['Nunito'] antialiased text-gray-800 bg-ui-bg dark:bg-ui-bg-dark dark:text-gray-200;
       }
     }
     
     @layer components {
       .tool-btn {
-        @apply p-2 rounded-md text-ui-gray hover:bg-ui-border hover:text-gray-800 transition-colors dark:hover:bg-gray-700 dark:hover:text-gray-200;
+        @apply p-1.5 rounded text-ui-gray hover:bg-ui-border hover:text-gray-800 transition-colors dark:hover:bg-gray-700 dark:hover:text-gray-200;
       }
       
       .tool-btn.active {
@@ -55,7 +56,7 @@
       }
       
       .layer-item {
-        @apply flex items-center p-2 bg-white rounded-md select-none text-sm transition-colors dark:bg-gray-800;
+        @apply flex items-center p-1.5 bg-white rounded select-none text-xs transition-colors dark:bg-gray-800;
         touch-action: none;
       }
       
@@ -113,34 +114,33 @@
       }
     }
   </style>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="flex flex-col h-screen">
-    <nav class="bg-white border-b border-ui-border shadow-sm p-4 flex items-center justify-between dark:bg-gray-900 dark:border-ui-border-dark">
-      <div class="flex items-center gap-1 bg-ui-bg p-1 rounded-lg dark:bg-gray-800">
+    <nav class="bg-white border-b border-ui-border shadow-sm p-2 flex items-center justify-between dark:bg-gray-900 dark:border-ui-border-dark">
+      <div class="flex items-center gap-0.5 bg-ui-bg p-0.5 rounded-lg dark:bg-gray-800">
         <button id="rectangleBtn" class="tool-btn active" title="Rectangle">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="3" width="18" height="18" rx="2"/>
           </svg>
         </button>
         <button id="textBtn" class="tool-btn" title="Text">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M17 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2z"/>
             <path d="M8 7h8M8 12h8M8 17h5"/>
           </svg>
         </button>
         <button id="deleteBtn" class="tool-btn" title="Delete">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"/>
           </svg>
         </button>
       </div>
       
-      <div class="flex items-center gap-2">
-        <button id="themeToggleBtn" class="theme-toggle" title="Toggle theme">
-          <!-- Sun icon (show in dark mode) -->
-          <svg class="w-5 h-5 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="flex items-center gap-1">
+        <button id="themeToggleBtn" class="tool-btn" title="Toggle theme">
+          <svg class="w-4 h-4 hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="5"/>
             <line x1="12" y1="1" x2="12" y2="3"/>
             <line x1="12" y1="21" x2="12" y2="23"/>
@@ -151,81 +151,115 @@
             <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
           </svg>
-          <!-- Moon icon (show in light mode) -->
-          <svg class="w-5 h-5 block dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg class="w-4 h-4 block dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
           </svg>
         </button>
-        <button id="exportBtn" class="flex items-center gap-2 bg-ui-blue hover:bg-ui-hover text-white px-4 py-2 rounded-md transition-colors">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button id="exportBtn" class="flex items-center gap-1 bg-ui-blue hover:bg-ui-hover text-white px-3 py-1.5 rounded text-xs transition-colors">
+          <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
             <polyline points="7 10 12 15 17 10"/>
             <line x1="12" y1="15" x2="12" y2="3"/>
           </svg>
-          Export to HTML
+          Export
         </button>
       </div>
     </nav>
     
     <div class="flex flex-1 overflow-hidden">
-      <div class="w-72 bg-white border-r border-ui-border p-5 dark:bg-gray-900 dark:border-ui-border-dark">
-        <div>
-          <h3 class="text-sm font-semibold text-gray-600 mb-4 dark:text-gray-400">Layers</h3>
-          <ul id="layerList" class="space-y-1"></ul>
-        </div>
-      </div>
-      
       <div id="canvas" class="flex-1 relative bg-white shadow-inner dark:bg-gray-900"></div>
       
-      <div class="w-72 bg-white border-l border-ui-border p-5 dark:bg-gray-900 dark:border-ui-border-dark">
-        <div>
-          <h3 class="text-sm font-semibold text-gray-600 mb-4 dark:text-gray-400">Properties</h3>
-          
-          <div class="space-y-4">
-            <div class="flex items-center gap-2">
-              <label class="text-sm text-ui-gray dark:text-gray-400">Color</label>
-              <select id="colorPicker" 
-                      class="w-full px-2 py-1 border border-ui-border rounded-md text-sm dark:bg-gray-800 dark:border-ui-border-dark">
-              </select>
+      <div class="w-64 bg-white border-l border-ui-border dark:bg-gray-900 dark:border-ui-border-dark flex flex-col">
+        <!-- Sidebar Tabs -->
+        <div class="flex items-center justify-between p-2 border-b border-ui-border dark:border-ui-border-dark">
+          <button class="tool-btn active" data-tab="patterns" title="Patterns">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/>
+            </svg>
+          </button>
+          <button class="tool-btn" data-tab="layers" title="Layers">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 4l-8 6 8 6 8-6-8-6zM4 14l8 6 8-6"/>
+            </svg>
+          </button>
+          <button class="tool-btn" data-tab="properties" title="Properties">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="flex-1 overflow-y-auto">
+          <!-- Patterns Tab (Default) -->
+          <div id="patternsTab" class="p-3 space-y-3">
+            <h3 class="text-xs font-semibold text-gray-600 dark:text-gray-400">UI Patterns</h3>
+            <div class="space-y-2">
+              <!-- Pattern placeholders -->
+              <div class="h-20 bg-gray-100 rounded dark:bg-gray-800 animate-pulse"></div>
+              <div class="h-20 bg-gray-100 rounded dark:bg-gray-800 animate-pulse"></div>
+              <div class="h-20 bg-gray-100 rounded dark:bg-gray-800 animate-pulse"></div>
             </div>
+          </div>
+
+          <!-- Layers Tab -->
+          <div id="layersTab" class="hidden p-3">
+            <h3 class="text-xs font-semibold text-gray-600 mb-3 dark:text-gray-400">Layers</h3>
+            <ul id="layerList" class="space-y-1"></ul>
+          </div>
+
+          <!-- Properties Tab -->
+          <div id="propertiesTab" class="hidden p-3 space-y-3">
+            <h3 class="text-xs font-semibold text-gray-600 dark:text-gray-400">Properties</h3>
             
-            <div class="flex items-center gap-2">
-              <label class="text-sm text-ui-gray dark:text-gray-400">Radius</label>
-              <select id="borderRadius"
-                      class="w-full px-2 py-1 border border-ui-border rounded-md text-sm dark:bg-gray-800 dark:border-ui-border-dark">
-                <option value="none">None</option>
-                <option value="sm">Small</option>
-                <option value="md">Medium</option>
-                <option value="lg">Large</option>
-                <option value="xl">Extra Large</option>
-                <option value="2xl">2X Large</option>
-                <option value="3xl">3X Large</option>
-                <option value="full">Full</option>
-              </select>
-            </div>
-            
-            <div class="flex items-center gap-2">
-              <label class="text-sm text-ui-gray dark:text-gray-400">X</label>
-              <input type="number" id="posX" 
-                     class="w-20 px-2 py-1 border border-ui-border rounded-md text-sm dark:bg-gray-800 dark:border-ui-border-dark">
-            </div>
-            
-            <div class="flex items-center gap-2">
-              <label class="text-sm text-ui-gray dark:text-gray-400">Y</label>
-              <input type="number" id="posY"
-                     class="w-20 px-2 py-1 border border-ui-border rounded-md text-sm dark:bg-gray-800 dark:border-ui-border-dark">
-            </div>
-            
-            <div class="flex items-center gap-2">
-              <label class="text-sm text-ui-gray dark:text-gray-400">Width</label>
-              <input type="number" id="width"
-                     class="w-20 px-2 py-1 border border-ui-border rounded-md text-sm dark:bg-gray-800 dark:border-ui-border-dark">
-            </div>
-            
-            <div class="flex items-center gap-2">
-              <label class="text-sm text-ui-gray dark:text-gray-400">Height</label>
-              <input type="number" id="height"
-                     class="w-20 px-2 py-1 border border-ui-border rounded-md text-sm dark:bg-gray-800 dark:border-ui-border-dark">
+            <div class="space-y-3">
+              <div class="flex items-center gap-2">
+                <label class="text-xs text-ui-gray dark:text-gray-400">Color</label>
+                <select id="colorPicker" 
+                        class="w-full px-2 py-1 border border-ui-border rounded text-xs dark:bg-gray-800 dark:border-ui-border-dark">
+                </select>
+              </div>
+              
+              <div class="flex items-center gap-2">
+                <label class="text-xs text-ui-gray dark:text-gray-400">Radius</label>
+                <select id="borderRadius"
+                        class="w-full px-2 py-1 border border-ui-border rounded text-xs dark:bg-gray-800 dark:border-ui-border-dark">
+                  <option value="none">None</option>
+                  <option value="sm">Small</option>
+                  <option value="md">Medium</option>
+                  <option value="lg">Large</option>
+                  <option value="xl">Extra Large</option>
+                  <option value="2xl">2X Large</option>
+                  <option value="3xl">3X Large</option>
+                  <option value="full">Full</option>
+                </select>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-2">
+                <div class="flex items-center gap-2">
+                  <label class="text-xs text-ui-gray dark:text-gray-400">X</label>
+                  <input type="number" id="posX" 
+                         class="w-full px-2 py-1 border border-ui-border rounded text-xs dark:bg-gray-800 dark:border-ui-border-dark">
+                </div>
+                
+                <div class="flex items-center gap-2">
+                  <label class="text-xs text-ui-gray dark:text-gray-400">Y</label>
+                  <input type="number" id="posY"
+                         class="w-full px-2 py-1 border border-ui-border rounded text-xs dark:bg-gray-800 dark:border-ui-border-dark">
+                </div>
+                
+                <div class="flex items-center gap-2">
+                  <label class="text-xs text-ui-gray dark:text-gray-400">W</label>
+                  <input type="number" id="width"
+                         class="w-full px-2 py-1 border border-ui-border rounded text-xs dark:bg-gray-800 dark:border-ui-border-dark">
+                </div>
+                
+                <div class="flex items-center gap-2">
+                  <label class="text-xs text-ui-gray dark:text-gray-400">H</label>
+                  <input type="number" id="height"
+                         class="w-full px-2 py-1 border border-ui-border rounded text-xs dark:bg-gray-800 dark:border-ui-border-dark">
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -28,6 +28,40 @@ document.addEventListener('DOMContentLoaded', () => {
   const exportBtn = document.getElementById('exportBtn');
   const themeToggleBtn = document.getElementById('themeToggleBtn');
 
+  // Initialize tab management
+  const tabButtons = document.querySelectorAll('[data-tab]');
+  const tabContents = {
+    patterns: document.getElementById('patternsTab'),
+    layers: document.getElementById('layersTab'),
+    properties: document.getElementById('propertiesTab')
+  };
+
+  function switchTab(tabName) {
+    // Update tab buttons
+    tabButtons.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tab === tabName);
+    });
+
+    // Update tab contents
+    Object.entries(tabContents).forEach(([name, element]) => {
+      element.classList.toggle('hidden', name !== tabName);
+    });
+  }
+
+  // Add click handlers for tabs
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchTab(btn.dataset.tab);
+    });
+  });
+
+  // Switch to properties tab when using tools
+  [rectangleBtn, textBtn].forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchTab('properties');
+    });
+  });
+
   // Instantiate managers in the correct order
   const layerManager = new LayerManager(canvas, layerList, registryManager);
   const toolManager = new ToolManager(
