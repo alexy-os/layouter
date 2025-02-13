@@ -49,10 +49,10 @@ export class ExportManager {
     const layers = this.layerManager.getLayers();
     let htmlContent = '';
     
-    // Sort layers by z-index for proper export order
-    const sortedLayers = [...layers].sort((a, b) => 
-      parseInt(a.element.dataset.zIndex) - parseInt(b.element.dataset.zIndex)
-    );
+    // Sort layers by z-index for proper export order and filter out boundary
+    const sortedLayers = [...layers]
+      .filter(layer => !layer.element.classList.contains('pointer-events-none'))
+      .sort((a, b) => parseInt(a.element.dataset.zIndex) - parseInt(b.element.dataset.zIndex));
 
     sortedLayers.forEach(layer => {
       const element = layer.element;
@@ -66,8 +66,7 @@ export class ExportManager {
     });
 
     // Create the full HTML document
-    const fullHtml = `
-<!DOCTYPE html>
+    const fullHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -80,7 +79,7 @@ export class ExportManager {
       theme: {}
     }
   </script>
-</head>
+  </head>
 <body class="relative min-h-screen bg-white dark:bg-gray-900">
   <div class="container mx-auto relative h-[calc(100vh)] max-w-4xl">
     ${htmlContent}
@@ -88,64 +87,56 @@ export class ExportManager {
 </body>
 </html>`;
 
-    // Create and trigger download
     const blob = new Blob([fullHtml], { type: 'text/html' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'exported-layout.html';
+    a.download = 'layout.html';
     a.click();
     window.URL.revokeObjectURL(url);
   }
 
   exportRectangle(element) {
-    const rect = element.getBoundingClientRect();
-    const canvas = this.layerManager.canvas.getBoundingClientRect();
-    
-    // Calculate pixel positions based on container dimensions
-    const left = Math.round((rect.left - canvas.left) / canvas.width * this.layerManager.CONTAINER_WIDTH);
-    const top = Math.round((rect.top - canvas.top) / canvas.height * this.layerManager.CONTAINER_HEIGHT);
-    const width = Math.round(rect.width / canvas.width * this.layerManager.CONTAINER_WIDTH);
-    const height = Math.round(rect.height / canvas.height * this.layerManager.CONTAINER_HEIGHT);
-    
-    // Get background color class
+    // Get essential classes
     const bgClass = Array.from(element.classList)
       .find(cls => cls.startsWith('bg-')) || 'bg-blue-500';
-    
-    // Get border radius class
     const roundedClass = Array.from(element.classList)
       .find(cls => cls.startsWith('rounded-')) || '';
+    
+    // Get computed styles
+    const left = parseInt(element.style.left);
+    const top = parseInt(element.style.top);
+    const width = parseInt(element.style.width);
+    const height = parseInt(element.style.height);
 
     // Get layer type from registry
     const layerType = this.registryManager.getLayerType(element.dataset.id);
     
     return `
-    <div class="absolute ${bgClass} ${roundedClass} left-[${left}px] top-[${top}px] w-[${width}px] h-[${height}px]" layer="${layerType}"></div>`;
+    <div class="absolute ${bgClass} ${roundedClass}" 
+         style="left: ${left}px; top: ${top}px; width: ${width}px; height: ${height}px;"
+         ${layerType ? `data-component="${layerType}"` : ''}></div>`;
   }
 
   exportText(element) {
-    const rect = element.getBoundingClientRect();
-    const canvas = this.layerManager.canvas.getBoundingClientRect();
-    
-    // Calculate pixel positions based on container dimensions
-    const left = Math.round((rect.left - canvas.left) / canvas.width * this.layerManager.CONTAINER_WIDTH);
-    const top = Math.round((rect.top - canvas.top) / canvas.height * this.layerManager.CONTAINER_HEIGHT);
-    const width = Math.round(rect.width / canvas.width * this.layerManager.CONTAINER_WIDTH);
-    const height = Math.round(rect.height / canvas.height * this.layerManager.CONTAINER_HEIGHT);
-    
-    // Get text content
-    const content = element.textContent;
-    
-    // Get styling classes
+    // Get essential classes
     const classes = Array.from(element.classList)
-      .filter(cls => !['layer', 'selected'].includes(cls))
+      .filter(cls => !['layer', 'selected', 'focus:outline-none'].includes(cls))
       .join(' ');
-
-    // Get layer type from registry
+    
+    // Get computed styles
+    const left = parseInt(element.style.left);
+    const top = parseInt(element.style.top);
+    const width = parseInt(element.style.width);
+    
+    // Get content and layer type
+    const content = element.textContent;
     const layerType = this.registryManager.getLayerType(element.dataset.id);
     
     return `
-    <div class="absolute ${classes} left-[${left}px] top-[${top}px] w-[${width}px] h-[${height}px]" layer="${layerType}">
+    <div class="absolute ${classes}" 
+         style="left: ${left}px; top: ${top}px; width: ${width}px;"
+         ${layerType ? `data-component="${layerType}"` : ''}>
       ${content}
     </div>`;
   }
