@@ -1,15 +1,5 @@
 # Layouter UI
 
-> ⚠️ **IMPORTANT NOTICE**
-> 
-> The constructor is in the active development stage. Please note the following features:
-> - The final export and proportions of elements directly depend on the screen size used for development
-> - For correct operation, it is recommended to use a screen of at least 1024px (lg)
-> - Changes in the operation of tools and export mechanics are possible
-> - The current version is intended for testing and feedback collection
-
-> "Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away" - Antoine de Saint-Exupéry
-
 ## The Most Elegant Approach to UI Design
 
 Layouter is not just another design tool – it's a philosophical statement about simplicity. While others offer endless toolbars that would make Swiss Army knives blush, we've distilled interface design to its purest essence: a rectangle and some text.

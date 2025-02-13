@@ -5,6 +5,7 @@ export class LayerManager {
     this.layers = [];
     this.currentLayer = null;
     this.registryManager = registryManager;
+    this.propertyManager = null; // Will be set after initialization
     this.initLayerSorting();
     this.nextId = 1;
 
@@ -318,6 +319,44 @@ export class LayerManager {
       } else {
         lockButton.classList.remove('text-blue-500');
         lockButton.classList.add('text-ui-gray');
+      }
+    });
+
+    // Add click handler for list item
+    listItem.addEventListener('click', () => {
+      // Deselect all layers in sidebar
+      this.layers.forEach(l => {
+        l.listItem.classList.remove('active');
+        l.element.classList.remove('selected');
+      });
+      
+      // Select clicked layer
+      listItem.classList.add('active');
+      layer.classList.add('selected');
+      
+      // Update property manager
+      if (this.propertyManager) {
+        this.propertyManager.selectLayer(layer);
+      }
+    });
+
+    // Add click handler for canvas element
+    layer.addEventListener('click', (e) => {
+      if (e.target === layer || e.target.parentElement === layer) {
+        // Deselect all layers
+        this.layers.forEach(l => {
+          l.listItem.classList.remove('active');
+          l.element.classList.remove('selected');
+        });
+        
+        // Select clicked layer
+        listItem.classList.add('active');
+        layer.classList.add('selected');
+        
+        // Update property manager
+        if (this.propertyManager) {
+          this.propertyManager.selectLayer(layer);
+        }
       }
     });
     

@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
   );
   
   toolManager.propertyManager = propertyManager;
+  layerManager.propertyManager = propertyManager;
 
   const eventHandlers = new EventHandlers(
     canvas, 

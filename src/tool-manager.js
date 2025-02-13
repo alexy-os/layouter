@@ -15,6 +15,7 @@ export class ToolManager {
     this.propertyManager = propertyManager;
 
     this.currentTool = 'rectangle';
+    this.gridSize = 16; // 1rem (16px) grid size
 
     this.initToolButtons();
     this.initDeleteButton();
@@ -42,6 +43,7 @@ export class ToolManager {
           const layerData = this.layerManager.addLayer(layer, 'Rectangle');
           this.propertyManager.selectLayer(layer);
         } else if (tool === 'text') {
+          this.gridSize = 4;
           // Create text at fixed position
           const columnWidth = this.canvas.clientWidth / 12;
           const layer = this.layerManager.createTextLayer(
@@ -76,12 +78,8 @@ export class ToolManager {
   }
 
   snapToGrid(value) {
-    // Get canvas width for column calculation
-    const canvasWidth = this.canvas.clientWidth;
-    const columnWidth = canvasWidth / 12;
-    
-    // Snap to nearest column
-    return Math.round(value / columnWidth) * columnWidth;
+    // Snap to nearest 1rem (16px) increment
+    return Math.round(value / this.gridSize) * this.gridSize;
   }
 
   shouldSnapToGrid() {
