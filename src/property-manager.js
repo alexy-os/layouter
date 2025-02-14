@@ -240,6 +240,7 @@ export class PropertyManager {
         <option value="h1">Heading H1</option>
         <option value="h2">Heading H2</option>
         <option value="h3">Heading H3</option>
+        <option value="text">Text</option>
         <option value="paragraph">Paragraph</option>
         <option value="blockquote">Blockquote</option>
       </select>
