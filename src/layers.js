@@ -11,7 +11,7 @@ export class LayerManager {
 
     // Add container dimensions
     this.CONTAINER_WIDTH = 1024;
-    this.CONTAINER_HEIGHT = 548;
+    this.CONTAINER_HEIGHT = this.calculateContainerHeight();
 
     // Add visual boundary for the working area
     const boundary = document.createElement('div');
@@ -487,5 +487,11 @@ export class LayerManager {
     
     // Reset next ID
     this.nextId = 1;
+  }
+
+  calculateContainerHeight() {
+    // Using 16:9 aspect ratio
+    const aspectRatio = 3 / 2;
+    return Math.round(this.CONTAINER_WIDTH / aspectRatio);
   }
 }
