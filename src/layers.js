@@ -16,14 +16,14 @@ export class LayerManager {
     // Add visual boundary for the working area
     const boundary = document.createElement('div');
     boundary.classList.add('absolute', 'inset-0', 'pointer-events-none', 'border-b-2', 'border-dashed', 'border-gray-300', 'dark:border-gray-700');
-    boundary.style.height = '552px';
+    boundary.style.height = '548px';
     this.canvas.appendChild(boundary);
 
     // Add recommended height label
     const heightLabel = document.createElement('div');
     heightLabel.classList.add('absolute', 'text-xs', 'text-gray-500', 'pointer-events-none');
     heightLabel.style.right = '8px';
-    heightLabel.style.top = '560px';
+    heightLabel.style.top = '556px';
     heightLabel.textContent = 'Recommended height';
     this.canvas.appendChild(heightLabel);
 
@@ -249,6 +249,14 @@ export class LayerManager {
     layer.style.minHeight = '48px';
     layer.style.width = `${this.canvas.clientWidth / 12 * 3}px`;
     
+    // Add default text classes to the layer
+    layer.classList.add(
+        'text-base',
+        'text-left',
+        'text-gray-800',
+        'dark:text-gray-200'
+    );
+    
     // Создаем внутренний контейнер для текста
     const textContainer = document.createElement('div');
     textContainer.contentEditable = true;
@@ -259,7 +267,6 @@ export class LayerManager {
     textContainer.style.alignItems = 'center';
     textContainer.style.padding = '8px';
     textContainer.classList.add(
-        'text-base',
         'focus:outline-none',
         'select-text',
         'cursor-text'

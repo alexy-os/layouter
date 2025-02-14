@@ -323,14 +323,25 @@ export class PropertyManager {
       textSize.addEventListener('change', () => {
         if (!this.selectedLayer || this.selectedLayer.dataset.type !== 'text') return;
         
-        // Remove old size class
+        // Remove old size class from layer
         const oldSizeClass = Array.from(this.selectedLayer.classList)
           .find(cls => /^text-(xs|sm|base|lg|xl|2xl|3xl)$/.test(cls));
         if (oldSizeClass) {
           this.selectedLayer.classList.remove(oldSizeClass);
         }
         
+        // Add new size class to layer
         this.selectedLayer.classList.add(textSize.value);
+        
+        // Update text container
+        const textContainer = this.selectedLayer.querySelector('div[contenteditable]');
+        if (textContainer) {
+          // Remove old size class from text container if exists
+          if (oldSizeClass) {
+            textContainer.classList.remove(oldSizeClass);
+          }
+          textContainer.classList.add(textSize.value);
+        }
       });
     }
 
@@ -338,24 +349,47 @@ export class PropertyManager {
       textAlign.addEventListener('change', () => {
         if (!this.selectedLayer || this.selectedLayer.dataset.type !== 'text') return;
         
-        // Remove old alignment class
+        // Remove old alignment class from layer
         const oldAlignClass = Array.from(this.selectedLayer.classList)
           .find(cls => /^text-(left|center|right|justify)$/.test(cls));
         if (oldAlignClass) {
           this.selectedLayer.classList.remove(oldAlignClass);
         }
         
+        // Add new alignment class to layer
         this.selectedLayer.classList.add(textAlign.value);
+        
+        // Update text container
+        const textContainer = this.selectedLayer.querySelector('div[contenteditable]');
+        if (textContainer) {
+          // Remove old alignment class from text container if exists
+          if (oldAlignClass) {
+            textContainer.classList.remove(oldAlignClass);
+          }
+          textContainer.classList.add(textAlign.value);
+        }
       });
     }
 
     if (textBold) {
       textBold.addEventListener('change', () => {
         if (!this.selectedLayer || this.selectedLayer.dataset.type !== 'text') return;
+        
+        // Update layer
         if (textBold.checked) {
           this.selectedLayer.classList.add('font-bold');
         } else {
           this.selectedLayer.classList.remove('font-bold');
+        }
+        
+        // Update text container
+        const textContainer = this.selectedLayer.querySelector('div[contenteditable]');
+        if (textContainer) {
+          if (textBold.checked) {
+            textContainer.classList.add('font-bold');
+          } else {
+            textContainer.classList.remove('font-bold');
+          }
         }
       });
     }
@@ -363,10 +397,22 @@ export class PropertyManager {
     if (textItalic) {
       textItalic.addEventListener('change', () => {
         if (!this.selectedLayer || this.selectedLayer.dataset.type !== 'text') return;
+        
+        // Update layer
         if (textItalic.checked) {
           this.selectedLayer.classList.add('italic');
         } else {
           this.selectedLayer.classList.remove('italic');
+        }
+        
+        // Update text container
+        const textContainer = this.selectedLayer.querySelector('div[contenteditable]');
+        if (textContainer) {
+          if (textItalic.checked) {
+            textContainer.classList.add('italic');
+          } else {
+            textContainer.classList.remove('italic');
+          }
         }
       });
     }
