@@ -1,7 +1,6 @@
 export class ExportManager {
-  constructor(layerManager, registryManager) {
+  constructor(layerManager) {
     this.layerManager = layerManager;
-    this.registryManager = registryManager;
     
     // Define Tailwind color mappings for common colors
     this.tailwindColors = {
@@ -49,10 +48,10 @@ export class ExportManager {
     const layers = this.layerManager.getLayers();
     let htmlContent = '';
     
-    // Sort layers by z-index for proper export order and filter out boundary
-    const sortedLayers = [...layers]
-      .filter(layer => !layer.element.classList.contains('pointer-events-none'))
-      .sort((a, b) => parseInt(a.element.dataset.zIndex) - parseInt(b.element.dataset.zIndex));
+    // Sort layers by z-index for proper export order
+    const sortedLayers = [...layers].sort((a, b) => 
+      parseInt(a.element.dataset.zIndex) - parseInt(b.element.dataset.zIndex)
+    );
 
     sortedLayers.forEach(layer => {
       const element = layer.element;
@@ -66,7 +65,8 @@ export class ExportManager {
     });
 
     // Create the full HTML document
-    const fullHtml = `<!DOCTYPE html>
+    const fullHtml = `
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -79,70 +79,66 @@ export class ExportManager {
       theme: {}
     }
   </script>
-  </head>
-<body class="bg-white dark:bg-gray-900">
-  <div class="container mx-auto h-[calc(100vh)] max-w-4xl">
+</head>
+<body class="relative min-h-screen bg-white dark:bg-gray-900">
+  <div class="container mx-auto relative h-[calc(100vh)] max-w-[902px]">
     ${htmlContent}
   </div>
 </body>
 </html>`;
 
+    // Create and trigger download
     const blob = new Blob([fullHtml], { type: 'text/html' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'layout.html';
+    a.download = 'exported-layout.html';
     a.click();
     window.URL.revokeObjectURL(url);
   }
 
   exportRectangle(element) {
-    const canvasRect = this.layerManager.canvas.getBoundingClientRect();
-    const elementRect = element.getBoundingClientRect();
+    const rect = element.getBoundingClientRect();
+    const canvas = this.layerManager.canvas.getBoundingClientRect();
     
-    // Calculate position relative to canvas
-    const left = Math.round(elementRect.left - canvasRect.left);
-    const top = Math.round(elementRect.top - canvasRect.top);
-    const width = Math.round(elementRect.width);
-    const height = Math.round(elementRect.height);
-
-    // Get essential classes
+    // Calculate pixel positions based on container dimensions
+    const left = Math.round((rect.left - canvas.left) / canvas.width * this.layerManager.CONTAINER_WIDTH);
+    const top = Math.round((rect.top - canvas.top) / canvas.height * this.layerManager.CONTAINER_HEIGHT);
+    const width = Math.round(rect.width / canvas.width * this.layerManager.CONTAINER_WIDTH);
+    const height = Math.round(rect.height / canvas.height * this.layerManager.CONTAINER_HEIGHT);
+    
+    // Get background color class
     const bgClass = Array.from(element.classList)
       .find(cls => cls.startsWith('bg-')) || 'bg-blue-500';
+    
+    // Get border radius class
     const roundedClass = Array.from(element.classList)
       .find(cls => cls.startsWith('rounded-')) || '';
     
-    // Get layer type from registry
-    const layerType = this.registryManager.getLayerType(element.dataset.id);
-    
     return `
-    <div class="absolute ${bgClass} ${roundedClass}" 
-         style="left: ${left}px; top: ${top}px; width: ${width}px; height: ${height}px;"
-         ${layerType ? `data-component="${layerType}"` : ''}></div>`;
+    <div class="absolute ${bgClass} ${roundedClass} left-[${left}px] top-[${top}px] w-[${width}px] h-[${height}px]"></div>`;
   }
 
   exportText(element) {
-    const canvasRect = this.layerManager.canvas.getBoundingClientRect();
-    const elementRect = element.getBoundingClientRect();
+    const rect = element.getBoundingClientRect();
+    const canvas = this.layerManager.canvas.getBoundingClientRect();
     
-    // Calculate position relative to canvas
-    const left = Math.round(elementRect.left - canvasRect.left);
-    const top = Math.round(elementRect.top - canvasRect.top);
-    const width = Math.round(elementRect.width);
+    // Calculate pixel positions based on container dimensions
+    const left = Math.round((rect.left - canvas.left) / canvas.width * this.layerManager.CONTAINER_WIDTH);
+    const top = Math.round((rect.top - canvas.top) / canvas.height * this.layerManager.CONTAINER_HEIGHT);
+    const width = Math.round(rect.width / canvas.width * this.layerManager.CONTAINER_WIDTH);
+    const height = Math.round(rect.height / canvas.height * this.layerManager.CONTAINER_HEIGHT);
     
-    // Get essential classes
+    // Get text content
+    const content = element.textContent;
+    
+    // Get styling classes
     const classes = Array.from(element.classList)
-      .filter(cls => !['layer', 'selected', 'focus:outline-none'].includes(cls))
+      .filter(cls => !['layer', 'selected'].includes(cls))
       .join(' ');
     
-    // Get content and layer type
-    const content = element.textContent;
-    const layerType = this.registryManager.getLayerType(element.dataset.id);
-    
     return `
-    <div class="absolute ${classes}" 
-         style="left: ${left}px; top: ${top}px; width: ${width}px;"
-         ${layerType ? `data-component="${layerType}"` : ''}>
+    <div class="absolute ${classes} left-[${left}px] top-[${top}px] w-[${width}px] h-[${height}px]">
       ${content}
     </div>`;
   }
