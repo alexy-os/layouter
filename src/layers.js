@@ -10,7 +10,7 @@ export class LayerManager {
     this.nextId = 1;
 
     // Add container dimensions
-    this.CONTAINER_WIDTH = 896;
+    this.CONTAINER_WIDTH = 1024;
     this.CONTAINER_HEIGHT = 548;
 
     // Add visual boundary for the working area
@@ -262,15 +262,22 @@ export class LayerManager {
     textContainer.contentEditable = true;
     textContainer.style.width = '100%';
     textContainer.style.height = '100%';
-    textContainer.style.whiteSpace = 'nowrap';
+    textContainer.style.whiteSpace = 'pre-wrap';
     textContainer.style.display = 'flex';
-    textContainer.style.alignItems = 'center';
+    textContainer.style.flexDirection = 'column';
+    textContainer.style.justifyContent = 'center';
     textContainer.style.padding = '8px';
     textContainer.classList.add(
         'focus:outline-none',
         'select-text',
         'cursor-text'
     );
+    
+    // Создаем внутренний элемент для текста
+    const textContent = document.createElement('div');
+    textContent.textContent = 'The Title';
+    textContent.style.width = '100%';
+    textContainer.appendChild(textContent);
     
     textContainer.addEventListener('paste', (e) => {
         e.preventDefault();
@@ -289,8 +296,6 @@ export class LayerManager {
     textContainer.addEventListener('drop', (e) => {
         e.preventDefault();
     });
-
-    textContainer.textContent = 'The Title';
     
     layer.appendChild(textContainer);
     

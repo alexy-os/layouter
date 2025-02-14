@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Import project
-  document.getElementById('importProjectBtn').addEventListener('click', () => {
+  /*document.getElementById('importProjectBtn').addEventListener('click', () => {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.json';
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
       isExportMenuOpen = false;
       exportMenu.classList.add('hidden');
     }
-  });
+  });*/
 
   // Export HTML
   document.getElementById('exportHtmlBtn').addEventListener('click', () => {

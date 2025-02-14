@@ -333,14 +333,13 @@ export class PropertyManager {
         // Add new size class to layer
         this.selectedLayer.classList.add(textSize.value);
         
-        // Update text container
-        const textContainer = this.selectedLayer.querySelector('div[contenteditable]');
-        if (textContainer) {
-          // Remove old size class from text container if exists
+        // Update text content
+        const textContent = this.selectedLayer.querySelector('div[contenteditable] > div');
+        if (textContent) {
           if (oldSizeClass) {
-            textContainer.classList.remove(oldSizeClass);
+            textContent.classList.remove(oldSizeClass);
           }
-          textContainer.classList.add(textSize.value);
+          textContent.classList.add(textSize.value);
         }
       });
     }
@@ -359,14 +358,13 @@ export class PropertyManager {
         // Add new alignment class to layer
         this.selectedLayer.classList.add(textAlign.value);
         
-        // Update text container
-        const textContainer = this.selectedLayer.querySelector('div[contenteditable]');
-        if (textContainer) {
-          // Remove old alignment class from text container if exists
+        // Update text content
+        const textContent = this.selectedLayer.querySelector('div[contenteditable] > div');
+        if (textContent) {
           if (oldAlignClass) {
-            textContainer.classList.remove(oldAlignClass);
+            textContent.classList.remove(oldAlignClass);
           }
-          textContainer.classList.add(textAlign.value);
+          textContent.classList.add(textAlign.value);
         }
       });
     }
@@ -382,13 +380,13 @@ export class PropertyManager {
           this.selectedLayer.classList.remove('font-bold');
         }
         
-        // Update text container
-        const textContainer = this.selectedLayer.querySelector('div[contenteditable]');
-        if (textContainer) {
+        // Update text content
+        const textContent = this.selectedLayer.querySelector('div[contenteditable] > div');
+        if (textContent) {
           if (textBold.checked) {
-            textContainer.classList.add('font-bold');
+            textContent.classList.add('font-bold');
           } else {
-            textContainer.classList.remove('font-bold');
+            textContent.classList.remove('font-bold');
           }
         }
       });
@@ -405,13 +403,13 @@ export class PropertyManager {
           this.selectedLayer.classList.remove('italic');
         }
         
-        // Update text container
-        const textContainer = this.selectedLayer.querySelector('div[contenteditable]');
-        if (textContainer) {
+        // Update text content
+        const textContent = this.selectedLayer.querySelector('div[contenteditable] > div');
+        if (textContent) {
           if (textItalic.checked) {
-            textContainer.classList.add('italic');
+            textContent.classList.add('italic');
           } else {
-            textContainer.classList.remove('italic');
+            textContent.classList.remove('italic');
           }
         }
       });
@@ -508,20 +506,24 @@ export class PropertyManager {
     // Update size
     const sizeClass = Array.from(layer.classList)
       .find(cls => /^text-(xs|sm|base|lg|xl|2xl|3xl)$/.test(cls));
-    if (sizeClass) {
+    if (sizeClass && textSize) {
       textSize.value = sizeClass;
     }
 
     // Update alignment
     const alignClass = Array.from(layer.classList)
       .find(cls => /^text-(left|center|right|justify)$/.test(cls));
-    if (alignClass) {
+    if (alignClass && textAlign) {
       textAlign.value = alignClass;
     }
 
     // Update formatting
-    textBold.checked = layer.classList.contains('font-bold');
-    textItalic.checked = layer.classList.contains('italic');
+    if (textBold) {
+      textBold.checked = layer.classList.contains('font-bold');
+    }
+    if (textItalic) {
+      textItalic.checked = layer.classList.contains('italic');
+    }
   }
 
   getClosestTailwindValue(value, mapping) {
