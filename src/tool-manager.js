@@ -15,7 +15,7 @@ export class ToolManager {
     this.propertyManager = propertyManager;
 
     this.currentTool = 'rectangle';
-    this.gridSize = 16; // 1rem (16px) grid size
+    this.gridSize = 8; // 0.5rem (8px) grid size
 
     this.initToolButtons();
     this.initDeleteButton();
