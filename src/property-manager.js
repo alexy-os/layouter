@@ -211,15 +211,18 @@ export class PropertyManager {
         input.addEventListener('change', () => {
           if (!this.selectedLayer) return;
           
-          const x = parseInt(this.posX.value) || 0;
-          const y = parseInt(this.posY.value) || 0;
-          const w = parseInt(this.width.value) || 100;
-          const h = parseInt(this.height.value) || 100;
+          const rect = this.selectedLayer.getBoundingClientRect();
+          const canvasRect = this.canvas.getBoundingClientRect();
           
-          this.selectedLayer.style.left = `${x}px`;
-          this.selectedLayer.style.top = `${y}px`;
-          this.selectedLayer.style.width = `${w}px`;
-          this.selectedLayer.style.height = `${h}px`;
+          this.posX.value = Math.round(rect.left - canvasRect.left);
+          this.posY.value = Math.round(rect.top - canvasRect.top);
+          this.width.value = Math.round(rect.width);
+          this.height.value = Math.round(rect.height);
+          
+          this.selectedLayer.style.left = `${this.posX.value}px`;
+          this.selectedLayer.style.top = `${this.posY.value}px`;
+          this.selectedLayer.style.width = `${this.width.value}px`;
+          this.selectedLayer.style.height = `${this.height.value}px`;
         });
       }
     });

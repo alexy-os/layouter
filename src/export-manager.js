@@ -80,8 +80,8 @@ export class ExportManager {
     }
   </script>
   </head>
-<body class="relative min-h-screen bg-white dark:bg-gray-900">
-  <div class="container mx-auto relative h-[calc(100vh)] max-w-4xl">
+<body class="bg-white dark:bg-gray-900">
+  <div class="container mx-auto h-[calc(100vh)] max-w-4xl">
     ${htmlContent}
   </div>
 </body>
@@ -97,18 +97,21 @@ export class ExportManager {
   }
 
   exportRectangle(element) {
+    const canvasRect = this.layerManager.canvas.getBoundingClientRect();
+    const elementRect = element.getBoundingClientRect();
+    
+    // Calculate position relative to canvas
+    const left = Math.round(elementRect.left - canvasRect.left);
+    const top = Math.round(elementRect.top - canvasRect.top);
+    const width = Math.round(elementRect.width);
+    const height = Math.round(elementRect.height);
+
     // Get essential classes
     const bgClass = Array.from(element.classList)
       .find(cls => cls.startsWith('bg-')) || 'bg-blue-500';
     const roundedClass = Array.from(element.classList)
       .find(cls => cls.startsWith('rounded-')) || '';
     
-    // Get computed styles
-    const left = parseInt(element.style.left);
-    const top = parseInt(element.style.top);
-    const width = parseInt(element.style.width);
-    const height = parseInt(element.style.height);
-
     // Get layer type from registry
     const layerType = this.registryManager.getLayerType(element.dataset.id);
     
@@ -119,15 +122,18 @@ export class ExportManager {
   }
 
   exportText(element) {
+    const canvasRect = this.layerManager.canvas.getBoundingClientRect();
+    const elementRect = element.getBoundingClientRect();
+    
+    // Calculate position relative to canvas
+    const left = Math.round(elementRect.left - canvasRect.left);
+    const top = Math.round(elementRect.top - canvasRect.top);
+    const width = Math.round(elementRect.width);
+    
     // Get essential classes
     const classes = Array.from(element.classList)
       .filter(cls => !['layer', 'selected', 'focus:outline-none'].includes(cls))
       .join(' ');
-    
-    // Get computed styles
-    const left = parseInt(element.style.left);
-    const top = parseInt(element.style.top);
-    const width = parseInt(element.style.width);
     
     // Get content and layer type
     const content = element.textContent;

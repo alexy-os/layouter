@@ -15,7 +15,7 @@ export class ToolManager {
     this.propertyManager = propertyManager;
 
     this.currentTool = 'rectangle';
-    this.gridSize = 8; // 0.5rem (8px) grid size
+    this.gridSize = 4; // 0.5rem (8px) grid size
 
     this.initToolButtons();
     this.initDeleteButton();
@@ -43,7 +43,6 @@ export class ToolManager {
           const layerData = this.layerManager.addLayer(layer, 'Rectangle');
           this.propertyManager.selectLayer(layer);
         } else if (tool === 'text') {
-          this.gridSize = 4;
           // Create text at fixed position
           const columnWidth = this.canvas.clientWidth / 12;
           const layer = this.layerManager.createTextLayer(
