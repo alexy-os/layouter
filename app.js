@@ -203,4 +203,17 @@ document.addEventListener('DOMContentLoaded', () => {
     gridOverlay.classList.toggle('hidden', !isGridVisible);
     gridToggleBtn.classList.toggle('active', isGridVisible);
   });
+
+  // Add handles toggle functionality
+  const handlesToggleBtn = document.getElementById('handlesToggleBtn');
+  let areHandlesVisible = true;
+  
+  handlesToggleBtn.addEventListener('click', () => {
+    areHandlesVisible = !areHandlesVisible;
+    document.body.classList.toggle('hide-handles', !areHandlesVisible);
+    handlesToggleBtn.classList.toggle('active', areHandlesVisible);
+  });
+  
+  // Set initial state
+  handlesToggleBtn.classList.add('active');
 });
