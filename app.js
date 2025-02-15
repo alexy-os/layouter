@@ -72,7 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
     deleteBtn, 
     canvas, 
     layerManager,
-    null
+    null,
+    registryManager
   );
   const propertyManager = new PropertyManager(
     canvas, 

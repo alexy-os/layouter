@@ -5,7 +5,8 @@ export class ToolManager {
     deleteBtn, 
     canvas, 
     layerManager,
-    propertyManager
+    propertyManager,
+    registryManager
   ) {
     this.rectangleBtn = rectangleBtn;
     this.textBtn = textBtn;
@@ -13,6 +14,7 @@ export class ToolManager {
     this.canvas = canvas;
     this.layerManager = layerManager;
     this.propertyManager = propertyManager;
+    this.registryManager = registryManager;
 
     this.currentTool = 'rectangle';
     this.gridSize = 4; // 0.5rem (8px) grid size
@@ -112,5 +114,17 @@ export class ToolManager {
 
   getCurrentTool() {
     return this.currentTool;
+  }
+
+  createRectangle(x, y, width, height) {
+    const rectangle = document.createElement('div');
+    rectangle.classList.add('layer');
+    rectangle.dataset.id = Date.now().toString();
+    rectangle.dataset.type = 'rectangle';
+    
+    // Регистрируем тип прямоугольника
+    this.registryManager.setLayerType(rectangle.dataset.id, 'rectangle');
+    
+    return rectangle;
   }
 }

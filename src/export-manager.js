@@ -1,6 +1,7 @@
 export class ExportManager {
-  constructor(layerManager) {
+  constructor(layerManager, registryManager) {
     this.layerManager = layerManager;
+    this.registryManager = registryManager;
     
     // Define Tailwind color mappings for common colors
     this.tailwindColors = {
@@ -101,7 +102,7 @@ export class ExportManager {
     const rect = element.getBoundingClientRect();
     const canvas = this.layerManager.canvas.getBoundingClientRect();
     
-    // Calculate pixel positions based on container dimensions
+    // Calculate positions
     const left = Math.round((rect.left - canvas.left) / canvas.width * this.layerManager.CONTAINER_WIDTH);
     const top = Math.round((rect.top - canvas.top) / canvas.height * this.layerManager.CONTAINER_HEIGHT);
     const width = Math.round(rect.width / canvas.width * this.layerManager.CONTAINER_WIDTH);
@@ -114,16 +115,19 @@ export class ExportManager {
     // Get border radius class
     const roundedClass = Array.from(element.classList)
       .find(cls => cls.startsWith('rounded-')) || '';
+
+    // Get layer type from registry or use default 'rectangle'
+    const layerType = this.registryManager.getLayerType(element.dataset.id) || 'rectangle';
     
     return `
-    <div class="absolute ${bgClass} ${roundedClass} left-[${left}px] top-[${top}px] w-[${width}px] h-[${height}px]"></div>`;
+    <div class="absolute ${bgClass} ${roundedClass} left-[${left}px] top-[${top}px] w-[${width}px] h-[${height}px]" layer="${layerType}"></div>`;
   }
 
   exportText(element) {
     const rect = element.getBoundingClientRect();
     const canvas = this.layerManager.canvas.getBoundingClientRect();
     
-    // Calculate pixel positions based on container dimensions
+    // Calculate pixel positions
     const left = Math.round((rect.left - canvas.left) / canvas.width * this.layerManager.CONTAINER_WIDTH);
     const top = Math.round((rect.top - canvas.top) / canvas.height * this.layerManager.CONTAINER_HEIGHT);
     const width = Math.round(rect.width / canvas.width * this.layerManager.CONTAINER_WIDTH);
@@ -137,8 +141,11 @@ export class ExportManager {
       .filter(cls => !['layer', 'selected'].includes(cls))
       .join(' ');
     
+    // Get layer type from registry
+    const layerType = this.registryManager.getLayerType(element.dataset.id) || '';
+    
     return `
-    <div class="absolute ${classes} left-[${left}px] top-[${top}px] w-[${width}px] h-[${height}px]">
+    <div class="absolute ${classes} left-[${left}px] top-[${top}px] w-[${width}px] h-[${height}px]" layer="${layerType}">
       ${content}
     </div>`;
   }
