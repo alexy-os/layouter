@@ -38,6 +38,9 @@ export class LayerManager {
       '6': '1.5rem',
       '8': '2rem'
     };
+
+    // Добавляем отслеживание активного холста
+    this.activeCanvas = null;
   }
 
   getClosestTailwindValue(value, mapping) {
@@ -216,93 +219,45 @@ export class LayerManager {
   }
 
   createRectangleLayer(x, y, width, height, borderRadius = 'none') {
-    const layer = document.createElement('div');
-    layer.classList.add('layer');
-    layer.dataset.type = 'rectangle';
-    layer.dataset.id = this.nextId++;
+    const rectangle = document.createElement('div');
+    rectangle.classList.add('layer', 'bg-blue-500');
+    rectangle.dataset.type = 'rectangle';
+    rectangle.dataset.id = Date.now().toString();
     
-    // Set initial position and size
-    layer.style.left = `${x}px`;
-    layer.style.top = `${y}px`;
-    layer.style.width = `${width}px`;
-    layer.style.height = `${height}px`;
+    rectangle.style.position = 'absolute';
+    rectangle.style.left = `${x}px`;
+    rectangle.style.top = `${y}px`;
+    rectangle.style.width = `${width}px`;
+    rectangle.style.height = `${height}px`;
     
-    // Add default styling
-    layer.classList.add('bg-blue-600');
-    layer.classList.add(`rounded-${borderRadius}`);
+    if (borderRadius !== 'none') {
+      rectangle.classList.add(`rounded-${borderRadius}`);
+    }
     
-    // Add resize handles by default
-    this.addResizeHandles(layer);
-    
-    return layer;
+    this.addResizeHandles(rectangle);
+    return rectangle;
   }
 
   createTextLayer(x, y) {
-    const layer = document.createElement('div');
-    layer.classList.add('layer');
-    layer.dataset.type = 'text';
-    layer.dataset.id = this.nextId++;
+    const text = document.createElement('div');
+    text.classList.add('layer', 'text-gray-900', 'dark:text-gray-100');
+    text.dataset.type = 'text';
+    text.dataset.id = Date.now().toString();
     
-    layer.style.left = `${x}px`;
-    layer.style.top = `${y}px`;
-    layer.style.minWidth = '200px';
-    layer.style.minHeight = '48px';
-    layer.style.width = `${this.canvas.clientWidth / 12 * 3}px`;
+    text.style.position = 'absolute';
+    text.style.left = `${x}px`;
+    text.style.top = `${y}px`;
+    text.style.minWidth = '100px';
+    text.style.minHeight = '48px';
     
-    // Add default text classes to the layer
-    layer.classList.add(
-        'text-base',
-        'text-left',
-        'text-gray-800',
-        'dark:text-gray-200'
-    );
+    const content = document.createElement('div');
+    content.contentEditable = true;
+    content.className = 'outline-none';
+    content.innerHTML = '<div>Enter text</div>';
     
-    // Создаем внутренний контейнер для текста
-    const textContainer = document.createElement('div');
-    textContainer.contentEditable = true;
-    textContainer.style.width = '100%';
-    textContainer.style.height = '100%';
-    textContainer.style.whiteSpace = 'pre-wrap';
-    textContainer.style.display = 'flex';
-    textContainer.style.flexDirection = 'column';
-    textContainer.style.justifyContent = 'center';
-    textContainer.style.padding = '8px';
-    textContainer.classList.add(
-        'focus:outline-none',
-        'select-text',
-        'cursor-text'
-    );
-    
-    // Создаем внутренний элемент для текста
-    const textContent = document.createElement('div');
-    textContent.textContent = 'The Title';
-    textContent.style.width = '100%';
-    textContainer.appendChild(textContent);
-    
-    textContainer.addEventListener('paste', (e) => {
-        e.preventDefault();
-        const text = e.clipboardData.getData('text/plain');
-        document.execCommand('insertText', false, text);
-    });
-    
-    textContainer.addEventListener('keydown', (e) => {
-        if (e.ctrlKey || e.metaKey) {
-            if (!['c', 'v', 'x'].includes(e.key.toLowerCase())) {
-                e.preventDefault();
-            }
-        }
-    });
-    
-    textContainer.addEventListener('drop', (e) => {
-        e.preventDefault();
-    });
-    
-    layer.appendChild(textContainer);
-    
-    // Add resize handles
-    this.addResizeHandles(layer);
-    
-    return layer;
+    text.appendChild(content);
+    this.addResizeHandles(text);
+    return text;
   }
 
   addResizeHandles(layer) {
@@ -316,124 +271,23 @@ export class LayerManager {
   }
 
   addLayer(layer, name) {
-    // Add layer to canvas
-    this.canvas.appendChild(layer);
-    
-    // Create layer list item
-    const listItem = document.createElement('li');
-    listItem.classList.add('layer-item');
-    listItem.dataset.id = layer.dataset.id;
-    listItem.setAttribute('draggable', 'true');
-    
-    // Create container for layer controls
-    const controlsContainer = document.createElement('div');
-    controlsContainer.classList.add('flex', 'items-center', 'gap-2', 'w-full');
-    
-    // Add drag handle
-    const dragHandle = document.createElement('div');
-    dragHandle.classList.add('drag-handle', 'text-ui-gray');
-    dragHandle.innerHTML = `
-      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M4 8h16M4 16h16"></path>
-      </svg>
-    `;
-    
-    // Add layer name
-    const layerName = document.createElement('span');
-    layerName.classList.add('flex-grow');
-    layerName.textContent = `${name} ${layer.dataset.id}`;
-    
-    // Add lock button
-    const lockButton = document.createElement('button');
-    lockButton.classList.add('lock-button', 'text-ui-gray', 'hover:text-gray-600', 'dark:hover:text-gray-300');
-    lockButton.innerHTML = `
-      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    `;
-    
-    // Add click handler for lock button
-    lockButton.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      const isLocked = layer.dataset.locked === 'true';
-      layer.dataset.locked = (!isLocked).toString();
-      
-      // Update button appearance
-      if (!isLocked) {
-        lockButton.classList.add('text-blue-500');
-        lockButton.classList.remove('text-ui-gray');
-      } else {
-        lockButton.classList.remove('text-blue-500');
-        lockButton.classList.add('text-ui-gray');
-      }
-    });
-
-    // Add click handler for list item
-    listItem.addEventListener('click', () => {
-      // Deselect all layers in sidebar
-      this.layers.forEach(l => {
-        l.listItem.classList.remove('active');
-        l.element.classList.remove('selected');
-      });
-      
-      // Select clicked layer
-      listItem.classList.add('active');
-      layer.classList.add('selected');
-      
-      // Update property manager
-      if (this.propertyManager) {
-        this.propertyManager.selectLayer(layer);
-      }
-    });
-
-    // Add click handler for canvas element
-    layer.addEventListener('click', (e) => {
-      if (e.target === layer || e.target.parentElement === layer) {
-        // Deselect all layers
-        this.layers.forEach(l => {
-          l.listItem.classList.remove('active');
-          l.element.classList.remove('selected');
-        });
-        
-        // Select clicked layer
-        listItem.classList.add('active');
-        layer.classList.add('selected');
-        
-        // Update property manager
-        if (this.propertyManager) {
-          this.propertyManager.selectLayer(layer);
-        }
-      }
-    });
-    
-    // Assemble controls
-    controlsContainer.appendChild(dragHandle);
-    controlsContainer.appendChild(layerName);
-    controlsContainer.appendChild(lockButton);
-    listItem.appendChild(controlsContainer);
-    
-    // Insert at the beginning for proper z-index ordering
-    if (this.layerList.firstChild) {
-      this.layerList.insertBefore(listItem, this.layerList.firstChild);
-    } else {
-      this.layerList.appendChild(listItem);
+    if (!this.activeCanvas) {
+      console.error('No active canvas selected');
+      return null;
     }
+
+    // Добавляем слой в активный холст
+    this.activeCanvas.appendChild(layer);
     
-    // Store layer data
     const layerData = {
       element: layer,
-      listItem: listItem
+      name: name || `Layer ${this.layers.length + 1}`
     };
     
-    // Insert at beginning of layers array and update z-indices
-    this.layers.unshift(layerData);
-    this.updateLayerOrder();
-
-    // Register layer with empty type
-    if (this.registryManager) {
-      this.registryManager.setLayerType(layer.dataset.id, '');
+    this.layers.push(layerData);
+    
+    if (this.layerList) {
+      this.updateLayerList();
     }
     
     return layerData;
@@ -476,16 +330,19 @@ export class LayerManager {
   }
 
   clearLayers() {
-    // Remove all layers from DOM
-    this.layers.forEach(layer => {
-      this.canvas.removeChild(layer.element);
-      this.layerList.removeChild(layer.listItem);
+    // Очищаем все слои из всех холстов
+    const canvasElements = this.canvas.querySelectorAll('[data-canvas]');
+    canvasElements.forEach(canvasElement => {
+      const layers = canvasElement.querySelectorAll('.layer');
+      layers.forEach(layer => layer.remove());
     });
     
-    // Clear layers array
-    this.layers = [];
+    // Очищаем список слоев
+    while (this.layerList.firstChild) {
+      this.layerList.firstChild.remove();
+    }
     
-    // Reset next ID
+    this.layers = [];
     this.nextId = 1;
   }
 
@@ -493,5 +350,119 @@ export class LayerManager {
     // Using 16:9 aspect ratio
     const aspectRatio = 3 / 2;
     return Math.round(this.CONTAINER_WIDTH / aspectRatio);
+  }
+
+  // Добавляем новые методы для работы с холстами
+  setActiveCanvas(canvasElement) {
+    this.activeCanvas = canvasElement;
+  }
+
+  isWithinActiveCanvas(x, y) {
+    if (!this.activeCanvas) return false;
+    
+    const rect = this.activeCanvas.getBoundingClientRect();
+    return (
+      x >= rect.left &&
+      x <= rect.right &&
+      y >= rect.top &&
+      y <= rect.bottom
+    );
+  }
+
+  // Добавляем новый метод
+  clearAllLayers() {
+    // Очищаем все слои из всех холстов
+    const canvases = this.canvas.querySelectorAll('[data-canvas]');
+    canvases.forEach(canvas => {
+      const layers = canvas.querySelectorAll('.layer');
+      layers.forEach(layer => {
+        layer.remove();
+      });
+    });
+    
+    // Очищаем список слоев
+    if (this.layerList) {
+      this.layerList.innerHTML = '';
+    }
+    
+    this.layers = [];
+  }
+
+  // Добавляем метод updateLayerList
+  updateLayerList() {
+    if (!this.layerList) return;
+
+    // Очищаем список слоев
+    this.layerList.innerHTML = '';
+
+    // Создаем элементы списка для каждого слоя
+    this.layers.forEach((layerData, index) => {
+      const listItem = document.createElement('li');
+      listItem.className = 'layer-item';
+      listItem.draggable = true;
+      listItem.dataset.index = index;
+
+      // Добавляем иконку в зависимости от типа слоя
+      const icon = layerData.element.dataset.type === 'text' 
+        ? '<svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>'
+        : '<svg class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>';
+
+      listItem.innerHTML = `
+        ${icon}
+        <span class="flex-1">${layerData.name}</span>
+      `;
+
+      // Добавляем обработчик клика для выбора слоя
+      listItem.addEventListener('click', () => {
+        this.selectLayer(layerData.element);
+      });
+
+      this.layerList.appendChild(listItem);
+    });
+
+    // Обновляем выделение активного слоя
+    this.updateLayerSelection();
+  }
+
+  // Добавляем вспомогательный метод для обновления выделения слоев
+  updateLayerSelection() {
+    if (!this.layerList) return;
+
+    // Убираем класс active со всех элементов
+    const items = this.layerList.querySelectorAll('.layer-item');
+    items.forEach(item => item.classList.remove('active'));
+
+    // Если есть выбранный слой, находим соответствующий элемент списка и добавляем класс active
+    if (this.selectedLayer) {
+      const index = this.layers.findIndex(layer => layer.element === this.selectedLayer);
+      if (index !== -1) {
+        const item = this.layerList.querySelector(`[data-index="${index}"]`);
+        if (item) {
+          item.classList.add('active');
+        }
+      }
+    }
+  }
+
+  // Обновляем метод selectLayer
+  selectLayer(layer) {
+    // Убираем выделение с предыдущего слоя
+    if (this.selectedLayer) {
+      this.selectedLayer.classList.remove('selected');
+    }
+
+    // Устанавливаем новый выбранный слой
+    this.selectedLayer = layer;
+    if (layer) {
+      layer.classList.add('selected');
+    }
+
+    // Обновляем выделение в списке слоев
+    this.updateLayerSelection();
+
+    // Обновляем свойства в PropertyManager, если он существует
+    if (this.propertyManager) {
+      this.propertyManager.updateProperties(layer);
+    }
   }
 }

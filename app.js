@@ -6,6 +6,7 @@ import { ExportManager } from './src/export-manager.js';
 import { ThemeManager } from './src/theme-manager.js';
 import { ValidationController } from './src/validation-controller.js';
 import { RegistryManager } from './src/registry-manager.js';
+import { PatternManager } from './src/pattern-manager.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize managers
@@ -65,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Instantiate managers in the correct order
   const layerManager = new LayerManager(canvas, layerList, registryManager);
+  const patternManager = new PatternManager(canvas, layerManager);
   const toolManager = new ToolManager(
     rectangleBtn, 
     textBtn, 
@@ -97,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
     propertyManager
   );
 
-  const exportManager = new ExportManager(layerManager, registryManager);
+  const exportManager = new ExportManager(layerManager, registryManager, patternManager);
   const validationController = new ValidationController(layerManager, registryManager);
   
   // Add mouse event listeners
@@ -135,10 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Export HTML
   document.getElementById('exportHtmlBtn').addEventListener('click', () => {
-    if (validationController.validateLayers()) {
-      exportManager.exportToHtml();
-      exportMenu.classList.add('hidden');
-    }
+    exportMenu.classList.add('hidden');
   });
 
   themeToggleBtn.addEventListener('click', () => {
@@ -169,4 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Set initial state
   handlesToggleBtn.classList.add('active');
+
+  // After creating patternManager
+  patternManager.setPattern('single'); // Set initial pattern
 });
