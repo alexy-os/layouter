@@ -6,7 +6,6 @@ import { ExportManager } from './src/export-manager.js';
 import { ThemeManager } from './src/theme-manager.js';
 import { ValidationController } from './src/validation-controller.js';
 import { RegistryManager } from './src/registry-manager.js';
-import { PatternManager } from './src/pattern-manager.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize managers
@@ -100,8 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const exportManager = new ExportManager(layerManager, registryManager);
   const validationController = new ValidationController(layerManager, registryManager);
-  const patternManager = new PatternManager(layerManager, registryManager);
-
+  
   // Add mouse event listeners
   canvas.addEventListener('mousedown', eventHandlers.handleCanvasMouseDown.bind(eventHandlers));
 
@@ -134,52 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
       document.removeEventListener('click', closeExportMenu);
     }
   }
-
-  // Import project
-  /*document.getElementById('importProjectBtn').addEventListener('click', () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    
-    input.onchange = e => {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      
-      reader.onload = event => {
-        const success = patternManager.importProject(event.target.result);
-        if (success) {
-          isExportMenuOpen = false;
-          exportMenu.classList.add('hidden');
-        } else {
-          alert('Ошибка импорта проекта. Проверьте формат файла.');
-        }
-      };
-      
-      reader.readAsText(file);
-    };
-    
-    input.click();
-  });
-
-  // Export project
-  document.getElementById('exportProjectBtn').addEventListener('click', () => {
-    if (validationController.validateLayers()) {
-      const json = patternManager.exportProject();
-      const blob = new Blob([json], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'project.json';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      
-      isExportMenuOpen = false;
-      exportMenu.classList.add('hidden');
-    }
-  });*/
 
   // Export HTML
   document.getElementById('exportHtmlBtn').addEventListener('click', () => {
