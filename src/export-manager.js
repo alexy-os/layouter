@@ -3,34 +3,6 @@ export class ExportManager {
     this.layerManager = layerManager;
     this.registryManager = registryManager;
     this.patternManager = patternManager;
-    
-    // Define Tailwind color mappings for common colors
-    this.tailwindColors = {
-      slate: {
-        50: '#f8fafc',
-        100: '#f1f5f9', 
-        200: '#e2e8f0',
-        300: '#cbd5e1',
-        400: '#94a3b8',
-        500: '#64748b',
-        600: '#475569',
-        700: '#334155',
-        800: '#1e293b',
-        900: '#0f172a'
-      },
-      blue: {
-        50: '#eff6ff',
-        100: '#dbeafe',
-        200: '#bfdbfe',
-        300: '#93c5fd',
-        400: '#60a5fa',
-        500: '#3b82f6',
-        600: '#2563eb',
-        700: '#1d4ed8',
-        800: '#1e40af',
-        900: '#1e3a8a'
-      }
-    };
 
     // Добавляем обработчик кнопки экспорта
     const exportHtmlBtn = document.getElementById('exportHtmlBtn');
@@ -42,24 +14,23 @@ export class ExportManager {
     }
   }
 
-  findTailwindColor(hexColor) {
-    // Try to match the color with Tailwind colors
-    for (const [colorName, shades] of Object.entries(this.tailwindColors)) {
-      for (const [shade, value] of Object.entries(shades)) {
-        if (value.toLowerCase() === hexColor.toLowerCase()) {
-          return `${colorName}-${shade}`;
-        }
-      }
-    }
-    // If no match found, return as bg-[color]
-    return `[${hexColor}]`;
-  }
-
   exportToHtml() {
-    // Получаем текущий паттерн
+    // Проверяем наличие паттерна
     const currentPattern = this.patternManager.currentPattern;
     if (!currentPattern) {
       this.showNotification('Выберите паттерн для экспорта', true);
+      return;
+    }
+
+    // Проверяем валидность слоев
+    const layers = this.layerManager.getLayers();
+    const invalidLayers = layers.filter(layer => {
+      const layerType = this.registryManager.getLayerType(layer.element.dataset.id);
+      return !layerType; // Слой невалиден если нет типа
+    });
+
+    if (invalidLayers.length > 0) {
+      this.showNotification('Выберите тип для всех слоев перед экспортом', true);
       return;
     }
 
@@ -75,12 +46,12 @@ export class ExportManager {
       
       if (canvasElement && targetCanvas) {
         // Получаем слои для данного canvas
-        const layers = this.layerManager.getLayers().filter(layer => 
+        const canvasLayers = layers.filter(layer => 
           layer.element.closest('[data-canvas]').getAttribute('data-canvas') === canvasId
         );
 
         // Сортируем слои по z-index
-        const sortedLayers = [...layers].sort((a, b) => 
+        const sortedLayers = [...canvasLayers].sort((a, b) => 
           parseInt(a.element.dataset.zIndex) - parseInt(b.element.dataset.zIndex)
         );
 
@@ -110,49 +81,62 @@ export class ExportManager {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Exported Layout</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {}
+    }
+  </script>
 </head>
 <body class="bg-white dark:bg-gray-900">
   ${container.innerHTML}
 </body>
 </html>`;
 
-    // Копируем в буфер обмена
-    navigator.clipboard.writeText(fullHtml).then(() => {
-      this.showNotification('HTML скопирован в буфер обмена');
-    }).catch(err => {
-      console.error('Failed to copy:', err);
-      this.showNotification('Ошибка при копировании', true);
-    });
+    // Создаем и скачиваем файл
+    const blob = new Blob([fullHtml], { type: 'text/html' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'exported-layout.html';
+    a.click();
+    window.URL.revokeObjectURL(url);
+
+    this.showNotification('Макет успешно экспортирован');
   }
 
   exportLayer(element, canvas) {
     const rect = element.getBoundingClientRect();
     const canvasRect = canvas.getBoundingClientRect();
     
-    // Рассчитываем позиции в утилитах Tailwind
-    const left = Math.round(rect.left - canvasRect.left);
-    const top = Math.round(rect.top - canvasRect.top);
-    const width = Math.round(rect.width);
-    const height = Math.round(rect.height);
+    // Получаем размеры колонки (canvas)
+    const columnWidth = canvasRect.width;
+    const columnHeight = canvasRect.height;
+    
+    // Рассчитываем позиции относительно колонки
+    const left = Math.round((rect.left - canvasRect.left) / columnWidth * 100);
+    const top = Math.round((rect.top - canvasRect.top) / columnHeight * 100);
+    const width = Math.round(rect.width / columnWidth * 100);
+    const height = Math.round(rect.height / columnHeight * 100);
 
+    // Получаем тип слоя из registry
+    const layerType = this.registryManager.getLayerType(element.dataset.id);
+    
     if (element.dataset.type === 'text') {
       const content = element.querySelector('[contenteditable]')?.innerHTML || '';
       const classes = Array.from(element.classList)
         .filter(cls => !['layer', 'selected'].includes(cls))
         .join(' ');
 
-      return `<div class="absolute ${classes} left-[${left}px] top-[${top}px] w-[${width}px]">${content}</div>`;
+      return `<div class="absolute ${classes} left-[${left}%] top-[${top}%] w-[${width}%]" layer="${layerType}">${content}</div>`;
     } else {
-      // Для прямоугольников
       const bgClass = Array.from(element.classList)
         .find(cls => cls.startsWith('bg-')) || 'bg-blue-500';
       
       const roundedClass = Array.from(element.classList)
         .find(cls => cls.startsWith('rounded-')) || '';
 
-      const layerType = this.registryManager.getLayerType(element.dataset.id) || 'rectangle';
-
-      return `<div class="absolute ${bgClass} ${roundedClass} left-[${left}px] top-[${top}px] w-[${width}px] h-[${height}px]" layer="${layerType}"></div>`;
+      return `<div class="absolute ${bgClass} ${roundedClass} left-[${left}%] top-[${top}%] w-[${width}%] h-[${height}%]" layer="${layerType}"></div>`;
     }
   }
 
@@ -165,21 +149,14 @@ export class ExportManager {
     return `#${((1 << 24) + (parseInt(r) << 16) + (parseInt(g) << 8) + parseInt(b)).toString(16).slice(1)}`;
   }
 
-  // Добавляем метод для показа уведомлений
   showNotification(message, isError = false) {
-    // Создаем элемент уведомления
     const notification = document.createElement('div');
     notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg ${
       isError ? 'bg-red-500' : 'bg-green-500'
     } text-white text-sm z-50`;
     notification.textContent = message;
 
-    // Добавляем на страницу
     document.body.appendChild(notification);
-
-    // Удаляем через 3 секунды
-    setTimeout(() => {
-      notification.remove();
-    }, 3000);
+    setTimeout(() => notification.remove(), 3000);
   }
 }

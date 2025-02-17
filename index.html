@@ -135,6 +135,14 @@
       [data-canvas] {
         @apply relative min-h-[200px];
       }
+      
+      [data-canvas] {
+        @apply transition-all duration-200;
+      }
+      
+      [data-canvas].active {
+        @apply border-blue-500 dark:border-blue-400;
+      }
     }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -220,7 +228,7 @@
         
         <!-- Grid overlay -->
         <div class="grid absolute inset-0 grid-cols-12 gap-1 sm:gap-2 md:gap-3 lg:gap-4 pointer-events-none">
-          <div class="h-full bg-slate-100/20 dark:bg-slate-800/10"></div>
+          <div class="h-full bg-slate-100/20 dark:bg-slate-900"></div>
           <!-- ... повторить еще 11 раз ... -->
         </div>
       </div>

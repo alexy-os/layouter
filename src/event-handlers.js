@@ -18,6 +18,12 @@ export class EventHandlers {
     this.dragLayerStartY = 0;
     this.dragLayerStartLeft = 0;
     this.dragLayerStartTop = 0;
+    this.resizeStartX = 0;
+    this.resizeStartY = 0;
+    this.resizeLayerStartWidth = 0;
+    this.resizeLayerStartHeight = 0;
+    this.resizeLayerStartLeft = 0;
+    this.resizeLayerStartTop = 0;
     this.initEvents();
   }
 
@@ -179,24 +185,21 @@ export class EventHandlers {
   }
 
   startLayerDrag(e, layer) {
-    // Don't start drag if we're editing text or layer is locked
-    if (layer.dataset.type === 'text' && document.activeElement === layer) {
-      return;
-    }
-    
-    // Don't start drag if layer is locked
-    if (layer.dataset.locked === 'true') {
-      return;
-    }
+    if (layer.dataset.type === 'text' && document.activeElement === layer) return;
+    if (layer.dataset.locked === 'true') return;
 
     this.isDragging = true;
     this.currentLayer = this.layerManager.getLayers().find(l => l.element === layer);
     
-    const rect = layer.getBoundingClientRect();
+    // Получаем активный canvas для текущего слоя
+    const activeCanvas = layer.closest('[data-canvas]');
+    const canvasRect = activeCanvas.getBoundingClientRect();
+    
+    // Используем координаты относительно активного canvas
     this.dragStartX = e.clientX;
     this.dragStartY = e.clientY;
-    this.dragLayerStartX = rect.left - this.canvas.getBoundingClientRect().left;
-    this.dragLayerStartY = rect.top - this.canvas.getBoundingClientRect().top;
+    this.dragLayerStartX = layer.offsetLeft;
+    this.dragLayerStartY = layer.offsetTop;
     
     layer.classList.add('dragging');
   }
@@ -207,10 +210,18 @@ export class EventHandlers {
     const deltaX = e.clientX - this.dragStartX;
     const deltaY = e.clientY - this.dragStartY;
     
+    // Получаем активный canvas для текущего слоя
+    const activeCanvas = this.currentLayer.element.closest('[data-canvas]');
+    const canvasRect = activeCanvas.getBoundingClientRect();
+    
     let newX = this.dragLayerStartX + deltaX;
     let newY = this.dragLayerStartY + deltaY;
     
-    // Always snap to grid
+    // Ограничиваем перемещение границами canvas
+    newX = Math.max(0, Math.min(newX, canvasRect.width - this.currentLayer.element.offsetWidth));
+    newY = Math.max(0, Math.min(newY, canvasRect.height - this.currentLayer.element.offsetHeight));
+    
+    // Снапим к сетке только по X
     newX = this.toolManager.snapToGrid(newX);
     
     this.currentLayer.element.style.left = `${newX}px`;
@@ -239,18 +250,18 @@ export class EventHandlers {
     this.selectedResizeHandle = handle.dataset.handle;
     this.currentLayer = this.layerManager.getLayers().find(l => l.element === layer);
     
-    const rect = layer.getBoundingClientRect();
-    const canvasRect = this.canvas.getBoundingClientRect();
+    // Получаем активный canvas для текущего слоя
+    const activeCanvas = layer.closest('[data-canvas]');
+    const canvasRect = activeCanvas.getBoundingClientRect();
     
-    // Use clientX/Y for mouse events and touches[0] for touch events
-    this.dragStartX = e.clientX || (e.touches && e.touches[0].clientX);
-    this.dragStartY = e.clientY || (e.touches && e.touches[0].clientY);
+    this.resizeStartX = e.clientX;
+    this.resizeStartY = e.clientY;
     
-    // Store initial dimensions and position
-    this.dragLayerStartX = rect.width;
-    this.dragLayerStartY = rect.height;
-    this.dragLayerStartLeft = rect.left - canvasRect.left;
-    this.dragLayerStartTop = rect.top - canvasRect.top;
+    // Сохраняем начальные размеры и позицию относительно активного canvas
+    this.resizeLayerStartWidth = layer.offsetWidth;
+    this.resizeLayerStartHeight = layer.offsetHeight;
+    this.resizeLayerStartLeft = layer.offsetLeft;
+    this.resizeLayerStartTop = layer.offsetTop;
     
     layer.classList.add('resizing');
   }
@@ -258,58 +269,59 @@ export class EventHandlers {
   handleLayerResize(e) {
     if (!this.isResizing || !this.currentLayer) return;
 
-    // Get current coordinates from either mouse or touch event
-    const currentX = e.touches ? e.touches[0].clientX : e.clientX;
-    const currentY = e.touches ? e.touches[0].clientY : e.clientY;
+    const layer = this.currentLayer.element;
+    const activeCanvas = layer.closest('[data-canvas]');
+    const canvasRect = activeCanvas.getBoundingClientRect();
+    
+    const deltaX = e.clientX - this.resizeStartX;
+    const deltaY = e.clientY - this.resizeStartY;
+    
+    let newWidth = this.resizeLayerStartWidth;
+    let newHeight = this.resizeLayerStartHeight;
+    let newLeft = this.resizeLayerStartLeft;
+    let newTop = this.resizeLayerStartTop;
 
-    const deltaX = currentX - this.dragStartX;
-    const deltaY = currentY - this.dragStartY;
-    
-    const rect = this.currentLayer.element.getBoundingClientRect();
-    const canvasRect = this.canvas.getBoundingClientRect();
-    
-    let newWidth = this.dragLayerStartX;
-    let newHeight = this.dragLayerStartY;
-    let currentLeft = this.dragLayerStartLeft;
-    let currentTop = this.dragLayerStartTop;
-    
-    switch(this.selectedResizeHandle) {
+    // Обработка изменения размера в зависимости от выбранной точки
+    switch (this.selectedResizeHandle) {
       case 'se':
-        newWidth = this.dragLayerStartX + deltaX;
-        newHeight = this.dragLayerStartY + deltaY;
+        newWidth = Math.max(20, this.resizeLayerStartWidth + deltaX);
+        newHeight = Math.max(20, this.resizeLayerStartHeight + deltaY);
         break;
       case 'sw':
-        newWidth = this.dragLayerStartX - deltaX;
-        currentLeft = this.dragStartX - canvasRect.left + deltaX;
-        newHeight = this.dragLayerStartY + deltaY;
+        newWidth = Math.max(20, this.resizeLayerStartWidth - deltaX);
+        newHeight = Math.max(20, this.resizeLayerStartHeight + deltaY);
+        newLeft = this.resizeLayerStartLeft + deltaX;
         break;
       case 'ne':
-        newWidth = this.dragLayerStartX + deltaX;
-        newHeight = this.dragLayerStartY - deltaY;
-        currentTop = this.dragStartY - canvasRect.top + deltaY;
+        newWidth = Math.max(20, this.resizeLayerStartWidth + deltaX);
+        newHeight = Math.max(20, this.resizeLayerStartHeight - deltaY);
+        newTop = this.resizeLayerStartTop + deltaY;
         break;
       case 'nw':
-        newWidth = this.dragLayerStartX - deltaX;
-        newHeight = this.dragLayerStartY - deltaY;
-        currentLeft = this.dragStartX - canvasRect.left + deltaX;
-        currentTop = this.dragStartY - canvasRect.top + deltaY;
+        newWidth = Math.max(20, this.resizeLayerStartWidth - deltaX);
+        newHeight = Math.max(20, this.resizeLayerStartHeight - deltaY);
+        newLeft = this.resizeLayerStartLeft + deltaX;
+        newTop = this.resizeLayerStartTop + deltaY;
         break;
     }
-    
-    // Ensure minimum size based on layer type
-    const minWidth = this.currentLayer.element.dataset.type === 'text' ? 100 : 20;
-    const minHeight = this.currentLayer.element.dataset.type === 'text' ? 48 : 20;
-    newWidth = Math.max(minWidth, newWidth);
-    newHeight = Math.max(minHeight, newHeight);
-    
-    // Snap width to grid
+
+    // Ограничиваем размеры и позицию границами canvas
+    newLeft = Math.max(0, Math.min(newLeft, canvasRect.width - newWidth));
+    newTop = Math.max(0, Math.min(newTop, canvasRect.height - newHeight));
+    newWidth = Math.min(newWidth, canvasRect.width - newLeft);
+    newHeight = Math.min(newHeight, canvasRect.height - newTop);
+
+    // Снапим к сетке только по X
+    newLeft = this.toolManager.snapToGrid(newLeft);
     newWidth = this.toolManager.snapToGrid(newWidth);
-    
-    this.currentLayer.element.style.width = `${newWidth}px`;
-    this.currentLayer.element.style.height = `${newHeight}px`;
-    this.currentLayer.element.style.left = `${currentLeft}px`;
-    this.currentLayer.element.style.top = `${currentTop}px`;
-    
+
+    // Применяем новые размеры и позицию
+    layer.style.width = `${newWidth}px`;
+    layer.style.height = `${newHeight}px`;
+    layer.style.left = `${newLeft}px`;
+    layer.style.top = `${newTop}px`;
+
+    // Обновляем значения в панели свойств
     this.propertyManager.updatePropertyInputs();
   }
 }

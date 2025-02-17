@@ -1,4 +1,4 @@
-import { LayerManager } from './src/layers.js';
+import { LayerManager } from './src/layer-manager.js';
 import { EventHandlers } from './src/event-handlers.js';
 import { ToolManager } from './src/tool-manager.js';
 import { PropertyManager } from './src/property-manager.js';
@@ -142,18 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   themeToggleBtn.addEventListener('click', () => {
     themeManager.toggleTheme();
-  });
-
-  // Grid toggle functionality
-  const gridToggleBtn = document.getElementById('gridToggleBtn');
-  const gridOverlay = document.querySelector('#canvas > .grid');
-  
-  let isGridVisible = true;
-  
-  gridToggleBtn.addEventListener('click', () => {
-    isGridVisible = !isGridVisible;
-    gridOverlay.classList.toggle('hidden', !isGridVisible);
-    gridToggleBtn.classList.toggle('active', isGridVisible);
   });
 
   // Add handles toggle functionality
