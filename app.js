@@ -6,7 +6,7 @@ import { ExportManager } from './src/export-manager.js';
 import { ThemeManager } from './src/theme-manager.js';
 import { ValidationController } from './src/validation-controller.js';
 import { RegistryManager } from './src/registry-manager.js';
-import { PatternManager } from './src/pattern-manager.js';
+import { PatternConstructor } from './src/pattern-constructor.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const themeManager = new ThemeManager();
@@ -59,7 +59,44 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const layerManager = new LayerManager(canvas, layerList, registryManager);
-  const patternManager = new PatternManager(canvas, layerManager);
+  
+  // Заменяем создание PatternManager на рендер паттернов через конструктор
+  PatternConstructor.renderPatternsPreview('patternsTab');
+
+  // Добавляем слушатель выбора паттерна
+  document.addEventListener('patternSelected', (e) => {
+    const { pattern } = e.detail;
+    layerManager.clearAllLayers();
+    canvas.innerHTML = pattern.template;
+    
+    // Инициализация холстов
+    const canvasElements = canvas.querySelectorAll('[data-canvas]');
+    canvasElements.forEach(canvasElement => {
+      canvasElement.style.cursor = 'pointer';
+      canvasElement.addEventListener('click', (e) => {
+        if (e.target === canvasElement) {
+          setActiveCanvas(canvasElement);
+        }
+      });
+    });
+
+    if (canvasElements.length > 0) {
+      setActiveCanvas(canvasElements[0]);
+    }
+  });
+
+  function setActiveCanvas(canvasElement) {
+    const activeCanvas = canvas.querySelector('[data-canvas].active');
+    if (activeCanvas) {
+      activeCanvas.classList.remove('active');
+      activeCanvas.style.cursor = 'pointer';
+    }
+    
+    canvasElement.classList.add('active');
+    canvasElement.style.cursor = 'default';
+    layerManager.setActiveCanvas(canvasElement);
+  }
+
   const toolManager = new ToolManager(
     rectangleBtn, 
     textBtn, 
@@ -92,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
     propertyManager
   );
 
-  const exportManager = new ExportManager(layerManager, registryManager, patternManager);
+  const exportManager = new ExportManager(layerManager, registryManager);
   const validationController = new ValidationController(layerManager, registryManager);
   
   canvas.addEventListener('mousedown', eventHandlers.handleCanvasMouseDown.bind(eventHandlers));
@@ -139,5 +176,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   
   handlesToggleBtn.classList.add('active');
-  patternManager.setPattern('single');
+
+  // Инициализируем первый паттерн
+  const firstPattern = PatternConstructor.getPatterns().single;
+  canvas.innerHTML = firstPattern.template;
+  const firstCanvas = canvas.querySelector('[data-canvas]');
+  if (firstCanvas) {
+    setActiveCanvas(firstCanvas);
+  }
 });

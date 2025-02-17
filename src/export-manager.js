@@ -1,152 +1,155 @@
 export class ExportManager {
-  constructor(layerManager, registryManager, patternManager) {
+  constructor(layerManager, registryManager) {
     this.layerManager = layerManager;
     this.registryManager = registryManager;
-    this.patternManager = patternManager;
 
-    // Add export button handler
-    const exportHtmlBtn = document.getElementById('exportHtmlBtn');
-    if (exportHtmlBtn) {
-      exportHtmlBtn.addEventListener('click', () => {
-        console.log('Export button clicked');
+    this.exportHtmlBtn = document.getElementById('exportHtmlBtn');
+    this.initializeExport();
+  }
+
+  initializeExport() {
+    this.exportHtmlBtn.addEventListener('click', () => {
+      if (this.validateBeforeExport()) {
         this.exportToHtml();
+      } else {
+        this.showNotification('Select <Layer Type> for all layers before export', true);
+      }
+    });
+  }
+
+  validateBeforeExport() {
+    const allCanvases = document.querySelectorAll('[data-canvas]');
+    let allLayersValid = true;
+
+    allCanvases.forEach(canvas => {
+      const layerElements = canvas.querySelectorAll('.layer');
+      layerElements.forEach(layer => {
+        const layerId = layer.dataset.id;
+        const layerType = this.registryManager.getLayerType(layerId);
+        if (!layerType) {
+          allLayersValid = false;
+        }
       });
-    }
+    });
+
+    return allLayersValid;
   }
 
   exportToHtml() {
-    // Check if a pattern is selected
-    const currentPattern = this.patternManager.currentPattern;
-    if (!currentPattern) {
-      this.showNotification('Select a pattern for export', true);
+    const pattern = this.getCurrentPattern();
+    if (!pattern) {
+      this.showNotification('No pattern template found', true);
       return;
     }
 
-    // Check layer validity
-    const layers = this.layerManager.getLayers();
-    const invalidLayers = layers.filter(layer => {
-      const layerType = this.registryManager.getLayerType(layer.element.dataset.id);
-      return !layerType; // Layer is invalid if it has no type
-    });
-
-    if (invalidLayers.length > 0) {
-      this.showNotification('Select <Layer Type> for all layers before export', true);
-      return;
-    }
-
-    // Create HTML structure based on the pattern
-    const patternHtml = currentPattern.template;
     const container = document.createElement('div');
-    container.innerHTML = patternHtml;
+    container.innerHTML = pattern;
 
-    // Process each canvas in the pattern
-    currentPattern.canvases.forEach(canvasId => {
-      const canvasElement = this.layerManager.canvas.querySelector(`[data-canvas="${canvasId}"]`);
-      const targetCanvas = container.querySelector(`[data-canvas="${canvasId}"]`);
+    container.querySelectorAll('[data-canvas]').forEach(canvas => {
+      const canvasId = canvas.dataset.canvas;
+      const originalCanvas = document.querySelector(`[data-canvas="${canvasId}"]`);
       
-      if (canvasElement && targetCanvas) {
-        // Get layers for this canvas
-        const canvasLayers = layers.filter(layer => 
-          layer.element.closest('[data-canvas]').getAttribute('data-canvas') === canvasId
-        );
+      if (originalCanvas) {
+        const layers = Array.from(originalCanvas.querySelectorAll('.layer'))
+          .map(layer => this.createCleanLayer(layer, originalCanvas))
+          .filter(Boolean);
 
-        // Sort layers by z-index
-        const sortedLayers = [...canvasLayers].sort((a, b) => 
-          parseInt(a.element.dataset.zIndex) - parseInt(b.element.dataset.zIndex)
-        );
-
-        // Export layers
-        const layersHtml = sortedLayers.map(layer => 
-          this.exportLayer(layer.element, canvasElement)
-        ).join('\n');
-
-        // Clean technical canvas classes
-        targetCanvas.className = targetCanvas.className
-          .split(' ')
-          .filter(cls => !['border-2', 'border-dashed', 'border-slate-200', 'dark:border-slate-700', 'bg-white', 'dark:bg-slate-800', 'rounded-lg'].includes(cls))
-          .join(' ');
-
-        // Remove grid overlay and add layers
-        targetCanvas.innerHTML = layersHtml;
-        targetCanvas.removeAttribute('data-canvas');
+        canvas.innerHTML = '';
+        layers.forEach(layer => canvas.appendChild(layer));
+        canvas.removeAttribute('data-canvas');
+        canvas.style.cursor = '';
       }
     });
 
-    // Create full HTML document
     const fullHtml = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Exported Layout</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {}
-    }
-  </script>
-</head>
-<body class="bg-white dark:bg-gray-900">
-  ${container.innerHTML}
-</body>
-</html>`;
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Exported Layout</title>
+      <script src="https://cdn.tailwindcss.com"></script>
+      <script>
+        tailwind.config = {
+          darkMode: 'class',
+          theme: {}
+        }
+      </script>
+    </head>
+    <body class="bg-white dark:bg-gray-900">
+      ${container.innerHTML}
+    </body>
+    </html>`;
 
-    // Create and download file
-    const blob = new Blob([fullHtml], { type: 'text/html' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'exported-layout.html';
-    a.click();
-    window.URL.revokeObjectURL(url);
-
+    this.downloadHtml(fullHtml);
     this.showNotification('Layout successfully exported');
   }
 
-  exportLayer(element, canvas) {
-    const rect = element.getBoundingClientRect();
-    const canvasRect = canvas.getBoundingClientRect();
-    
-    // Get column sizes (canvas)
-    const columnWidth = canvasRect.width;
-    const columnHeight = canvasRect.height;
-    
-    // Calculate positions relative to the column
-    const left = Math.round((rect.left - canvasRect.left) / columnWidth * 100);
-    const top = Math.round((rect.top - canvasRect.top) / columnHeight * 100);
-    const width = Math.round(rect.width / columnWidth * 100);
-    const height = Math.round(rect.height / columnHeight * 100);
+  createCleanLayer(layer, canvas) {
+    const layerType = this.registryManager.getLayerType(layer.dataset.id);
+    if (!layerType) return null;
 
-    // Get layer type from registry
-    const layerType = this.registryManager.getLayerType(element.dataset.id);
+    const div = document.createElement('div');
+    div.setAttribute('layer', layerType);
     
-    if (element.dataset.type === 'text') {
-      const content = element.querySelector('[contenteditable]')?.innerHTML || '';
-      const classes = Array.from(element.classList)
-        .filter(cls => !['layer', 'selected'].includes(cls))
-        .join(' ');
+    div.classList.add('absolute');
 
-      return `<div class="absolute ${classes} left-[${left}%] top-[${top}%] w-[${width}%]" layer="${layerType}">${content}</div>`;
+    if (layer.dataset.type === 'text') {
+      const textClasses = Array.from(layer.classList)
+        .filter(cls => (cls.startsWith('text-') || cls.startsWith('font-')) && cls.trim());
+      
+      if (textClasses.length > 0) {
+        div.classList.add(...textClasses);
+      }
+      
+      const contentDiv = layer.querySelector('[contenteditable] div');
+      if (contentDiv) {
+        div.innerHTML = contentDiv.outerHTML;
+      }
     } else {
-      const bgClass = Array.from(element.classList)
+      const bgClass = Array.from(layer.classList)
         .find(cls => cls.startsWith('bg-')) || 'bg-blue-500';
       
-      const roundedClass = Array.from(element.classList)
-        .find(cls => cls.startsWith('rounded-')) || '';
-
-      return `<div class="absolute ${bgClass} ${roundedClass} left-[${left}%] top-[${top}%] w-[${width}%] h-[${height}%]" layer="${layerType}"></div>`;
+      const roundedClass = Array.from(layer.classList)
+        .find(cls => cls.startsWith('rounded-'));
+      
+      div.classList.add(bgClass);
+      if (roundedClass) {
+        div.classList.add(roundedClass);
+      }
     }
+
+    const rect = layer.getBoundingClientRect();
+    const canvasRect = canvas.getBoundingClientRect();
+    
+    const left = Math.round((rect.left - canvasRect.left) / canvasRect.width * 100);
+    const top = Math.round((rect.top - canvasRect.top) / canvasRect.height * 100);
+    const width = Math.round(rect.width / canvasRect.width * 100);
+    const height = Math.round(rect.height / canvasRect.height * 100);
+
+    div.classList.add(
+      `left-[${left}%]`,
+      `top-[${top}%]`,
+      `w-[${width}%]`,
+      `h-[${height}%]`
+    );
+
+    return div;
   }
 
-  rgbToHex(rgb) {
-    if (!rgb || rgb === 'transparent') return '#000000';
-    const match = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-    if (!match) return rgb;
-    
-    const [, r, g, b] = match;
-    return `#${((1 << 24) + (parseInt(r) << 16) + (parseInt(g) << 8) + parseInt(b)).toString(16).slice(1)}`;
+  getCurrentPattern() {
+    const canvas = document.getElementById('canvas');
+    return canvas?.firstElementChild?.outerHTML || null;
+  }
+
+  downloadHtml(html) {
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'layout.html';
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   showNotification(message, isError = false) {

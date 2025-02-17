@@ -240,7 +240,7 @@ export class LayerManager {
 
   createTextLayer(x, y) {
     const text = document.createElement('div');
-    text.classList.add('layer', 'text-gray-900', 'dark:text-gray-100');
+    text.classList.add('layer');
     text.dataset.type = 'text';
     text.dataset.id = Date.now().toString();
     
@@ -249,6 +249,9 @@ export class LayerManager {
     text.style.top = `${y}px`;
     text.style.minWidth = '100px';
     text.style.minHeight = '48px';
+    
+    // Добавляем базовые классы для текста
+    text.classList.add('text-left', 'text-base');
     
     const content = document.createElement('div');
     content.contentEditable = true;

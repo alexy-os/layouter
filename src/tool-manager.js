@@ -45,16 +45,19 @@ export class ToolManager {
           const layerData = this.layerManager.addLayer(layer, 'Rectangle');
           this.propertyManager.selectLayer(layer);
         } else if (tool === 'text') {
-          // Create text at fixed position
-          const columnWidth = this.canvas.clientWidth / 12;
-          const layer = this.layerManager.createTextLayer(
-            columnWidth, // First column
-            100 // Fixed Y position
-          );
-          const layerData = this.layerManager.addLayer(layer, 'Text');
-          this.propertyManager.selectLayer(layer);
-          // Focus the text element for immediate editing
-          layer.focus();
+          const activeCanvas = document.querySelector('[data-canvas].active');
+          if (activeCanvas) {
+            // Получаем координаты относительно активного canvas
+            const canvasRect = activeCanvas.getBoundingClientRect();
+            const layer = this.layerManager.createTextLayer(
+              0, // Начальная X позиция 
+              0  // Начальная Y позиция
+            );
+            activeCanvas.appendChild(layer); // Добавляем в активный canvas
+            const layerData = this.layerManager.addLayer(layer, 'Text');
+            this.propertyManager.selectLayer(layer);
+            layer.focus();
+          }
         }
         this.selectTool(tool);
       });
