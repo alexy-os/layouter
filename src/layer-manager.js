@@ -39,7 +39,7 @@ export class LayerManager {
       '8': '2rem'
     };
 
-    // Добавляем отслеживание активного холста
+    // Add tracking of the active canvas
     this.activeCanvas = null;
   }
 
@@ -276,7 +276,7 @@ export class LayerManager {
       return null;
     }
 
-    // Добавляем слой в активный холст
+    // Add layer to the active canvas
     this.activeCanvas.appendChild(layer);
     
     const layerData = {
@@ -338,14 +338,14 @@ export class LayerManager {
   }
 
   clearLayers() {
-    // Очищаем все слои из всех холстов
+    // Clear all layers from all canvases
     const canvasElements = this.canvas.querySelectorAll('[data-canvas]');
     canvasElements.forEach(canvasElement => {
       const layers = canvasElement.querySelectorAll('.layer');
       layers.forEach(layer => layer.remove());
     });
     
-    // Очищаем список слоев
+    // Clear the layer list
     while (this.layerList.firstChild) {
       this.layerList.firstChild.remove();
     }
@@ -360,7 +360,7 @@ export class LayerManager {
     return Math.round(this.CONTAINER_WIDTH / aspectRatio);
   }
 
-  // Добавляем новые методы для работы с холстами
+  // Add new methods for working with canvases
   setActiveCanvas(canvasElement) {
     this.activeCanvas = canvasElement;
   }
@@ -377,9 +377,9 @@ export class LayerManager {
     );
   }
 
-  // Добавляем новый метод
+  // Add new method
   clearAllLayers() {
-    // Очищаем все слои из всех холстов
+    // Clear all layers from all canvases
     const canvases = this.canvas.querySelectorAll('[data-canvas]');
     canvases.forEach(canvas => {
       const layers = canvas.querySelectorAll('.layer');
@@ -388,7 +388,7 @@ export class LayerManager {
       });
     });
     
-    // Очищаем список слоев
+    // Clear the layer list
     if (this.layerList) {
       this.layerList.innerHTML = '';
     }
@@ -396,7 +396,7 @@ export class LayerManager {
     this.layers = [];
   }
 
-  // Добавляем метод updateLayerList
+  // Add method updateLayerList
   updateLayerList() {
     // Clear existing list
     this.layerList.innerHTML = '';
@@ -426,15 +426,15 @@ export class LayerManager {
     });
   }
 
-  // Добавляем вспомогательный метод для обновления выделения слоев
+  // Add helper method for updating layer selection
   updateLayerSelection() {
     if (!this.layerList) return;
 
-    // Убираем класс active со всех элементов
+    // Remove active class from all items
     const items = this.layerList.querySelectorAll('.layer-item');
     items.forEach(item => item.classList.remove('active'));
 
-    // Если есть выбранный слой, находим соответствующий элемент списка и добавляем класс active
+    // If there is a selected layer, find the corresponding list item and add the active class
     if (this.selectedLayer) {
       const index = this.layers.findIndex(layer => layer.element === this.selectedLayer);
       if (index !== -1) {
@@ -446,7 +446,7 @@ export class LayerManager {
     }
   }
 
-  // Обновляем метод selectLayer
+  // Update method selectLayer
   selectLayer(layer) {
     if (this.currentLayer) {
       this.currentLayer.element.classList.remove('selected');

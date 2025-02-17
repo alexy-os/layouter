@@ -13,7 +13,7 @@ export class RegistryManager {
     localStorage.setItem(this.storageKey, JSON.stringify(this.registry));
   }
 
-  // Регистрация типа элемента
+  // Register element type
   setLayerType(layerId, type) {
     this.registry[layerId] = {
       type,
@@ -22,18 +22,18 @@ export class RegistryManager {
     this.saveRegistry();
   }
 
-  // Получение типа элемента
+  // Get element type
   getLayerType(layerId) {
     return this.registry[layerId]?.type || '';
   }
 
-  // Удаление элемента из реестра
+  // Remove element from registry
   removeLayer(layerId) {
     delete this.registry[layerId];
     this.saveRegistry();
   }
 
-  // Проверка наличия незарегистрированных элементов
+  // Check for unregistered elements
   validateLayers(layers) {
     const unregistered = [];
     
@@ -55,7 +55,7 @@ export class RegistryManager {
     return unregistered;
   }
 
-  // Очистка реестра (например, при сбросе)
+  // Clear registry (e.g., when resetting)
   clearRegistry() {
     this.registry = {};
     localStorage.removeItem(this.storageKey);

@@ -9,7 +9,6 @@ import { RegistryManager } from './src/registry-manager.js';
 import { PatternManager } from './src/pattern-manager.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Initialize managers
   const themeManager = new ThemeManager();
   const registryManager = new RegistryManager();
   
@@ -30,7 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const exportMenu = document.getElementById('exportMenu');
   const themeToggleBtn = document.getElementById('themeToggleBtn');
 
-  // Initialize tab management
   const tabButtons = document.querySelectorAll('[data-tab]');
   const tabContents = {
     patterns: document.getElementById('patternsTab'),
@@ -39,32 +37,27 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   function switchTab(tabName) {
-    // Update tab buttons
     tabButtons.forEach(btn => {
       btn.classList.toggle('active', btn.dataset.tab === tabName);
     });
 
-    // Update tab contents
     Object.entries(tabContents).forEach(([name, element]) => {
       element.classList.toggle('hidden', name !== tabName);
     });
   }
 
-  // Add click handlers for tabs
   tabButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       switchTab(btn.dataset.tab);
     });
   });
 
-  // Switch to properties tab when using tools
   [rectangleBtn, textBtn].forEach(btn => {
     btn.addEventListener('click', () => {
       switchTab('properties');
     });
   });
 
-  // Instantiate managers in the correct order
   const layerManager = new LayerManager(canvas, layerList, registryManager);
   const patternManager = new PatternManager(canvas, layerManager);
   const toolManager = new ToolManager(
@@ -102,16 +95,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const exportManager = new ExportManager(layerManager, registryManager, patternManager);
   const validationController = new ValidationController(layerManager, registryManager);
   
-  // Add mouse event listeners
   canvas.addEventListener('mousedown', eventHandlers.handleCanvasMouseDown.bind(eventHandlers));
-
-  // Add touch event listeners
   canvas.addEventListener('touchstart', eventHandlers.handleCanvasTouchStart.bind(eventHandlers));
-
-  // Prevent default touch behavior to avoid scrolling
   canvas.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
 
-  // Export menu functionality
   let isExportMenuOpen = false;
 
   exportBtn.addEventListener('click', (e) => {
@@ -120,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
     exportMenu.classList.toggle('hidden', !isExportMenuOpen);
     
     if (isExportMenuOpen) {
-      // Add click outside listener
       setTimeout(() => {
         document.addEventListener('click', closeExportMenu);
       }, 0);
@@ -135,7 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Export HTML
   document.getElementById('exportHtmlBtn').addEventListener('click', () => {
     exportMenu.classList.add('hidden');
   });
@@ -144,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
     themeManager.toggleTheme();
   });
 
-  // Add handles toggle functionality
   const handlesToggleBtn = document.getElementById('handlesToggleBtn');
   let areHandlesVisible = true;
   
@@ -154,9 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
     handlesToggleBtn.classList.toggle('active', areHandlesVisible);
   });
   
-  // Set initial state
   handlesToggleBtn.classList.add('active');
-
-  // After creating patternManager
-  patternManager.setPattern('single'); // Set initial pattern
+  patternManager.setPattern('single');
 });

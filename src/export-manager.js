@@ -4,7 +4,7 @@ export class ExportManager {
     this.registryManager = registryManager;
     this.patternManager = patternManager;
 
-    // Добавляем обработчик кнопки экспорта
+    // Add export button handler
     const exportHtmlBtn = document.getElementById('exportHtmlBtn');
     if (exportHtmlBtn) {
       exportHtmlBtn.addEventListener('click', () => {
@@ -15,64 +15,64 @@ export class ExportManager {
   }
 
   exportToHtml() {
-    // Проверяем наличие паттерна
+    // Check if a pattern is selected
     const currentPattern = this.patternManager.currentPattern;
     if (!currentPattern) {
-      this.showNotification('Выберите паттерн для экспорта', true);
+      this.showNotification('Select a pattern for export', true);
       return;
     }
 
-    // Проверяем валидность слоев
+    // Check layer validity
     const layers = this.layerManager.getLayers();
     const invalidLayers = layers.filter(layer => {
       const layerType = this.registryManager.getLayerType(layer.element.dataset.id);
-      return !layerType; // Слой невалиден если нет типа
+      return !layerType; // Layer is invalid if it has no type
     });
 
     if (invalidLayers.length > 0) {
-      this.showNotification('Выберите тип для всех слоев перед экспортом', true);
+      this.showNotification('Select <Layer Type> for all layers before export', true);
       return;
     }
 
-    // Создаем структуру HTML на основе паттерна
+    // Create HTML structure based on the pattern
     const patternHtml = currentPattern.template;
     const container = document.createElement('div');
     container.innerHTML = patternHtml;
 
-    // Обрабатываем каждый canvas в паттерне
+    // Process each canvas in the pattern
     currentPattern.canvases.forEach(canvasId => {
       const canvasElement = this.layerManager.canvas.querySelector(`[data-canvas="${canvasId}"]`);
       const targetCanvas = container.querySelector(`[data-canvas="${canvasId}"]`);
       
       if (canvasElement && targetCanvas) {
-        // Получаем слои для данного canvas
+        // Get layers for this canvas
         const canvasLayers = layers.filter(layer => 
           layer.element.closest('[data-canvas]').getAttribute('data-canvas') === canvasId
         );
 
-        // Сортируем слои по z-index
+        // Sort layers by z-index
         const sortedLayers = [...canvasLayers].sort((a, b) => 
           parseInt(a.element.dataset.zIndex) - parseInt(b.element.dataset.zIndex)
         );
 
-        // Экспортируем слои
+        // Export layers
         const layersHtml = sortedLayers.map(layer => 
           this.exportLayer(layer.element, canvasElement)
         ).join('\n');
 
-        // Очищаем технические классы canvas
+        // Clean technical canvas classes
         targetCanvas.className = targetCanvas.className
           .split(' ')
           .filter(cls => !['border-2', 'border-dashed', 'border-slate-200', 'dark:border-slate-700', 'bg-white', 'dark:bg-slate-800', 'rounded-lg'].includes(cls))
           .join(' ');
 
-        // Удаляем grid overlay и добавляем слои
+        // Remove grid overlay and add layers
         targetCanvas.innerHTML = layersHtml;
         targetCanvas.removeAttribute('data-canvas');
       }
     });
 
-    // Создаем полный HTML документ
+    // Create full HTML document
     const fullHtml = `
 <!DOCTYPE html>
 <html lang="en">
@@ -93,7 +93,7 @@ export class ExportManager {
 </body>
 </html>`;
 
-    // Создаем и скачиваем файл
+    // Create and download file
     const blob = new Blob([fullHtml], { type: 'text/html' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -102,24 +102,24 @@ export class ExportManager {
     a.click();
     window.URL.revokeObjectURL(url);
 
-    this.showNotification('Макет успешно экспортирован');
+    this.showNotification('Layout successfully exported');
   }
 
   exportLayer(element, canvas) {
     const rect = element.getBoundingClientRect();
     const canvasRect = canvas.getBoundingClientRect();
     
-    // Получаем размеры колонки (canvas)
+    // Get column sizes (canvas)
     const columnWidth = canvasRect.width;
     const columnHeight = canvasRect.height;
     
-    // Рассчитываем позиции относительно колонки
+    // Calculate positions relative to the column
     const left = Math.round((rect.left - canvasRect.left) / columnWidth * 100);
     const top = Math.round((rect.top - canvasRect.top) / columnHeight * 100);
     const width = Math.round(rect.width / columnWidth * 100);
     const height = Math.round(rect.height / columnHeight * 100);
 
-    // Получаем тип слоя из registry
+    // Get layer type from registry
     const layerType = this.registryManager.getLayerType(element.dataset.id);
     
     if (element.dataset.type === 'text') {

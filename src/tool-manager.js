@@ -122,7 +122,7 @@ export class ToolManager {
     rectangle.dataset.id = Date.now().toString();
     rectangle.dataset.type = 'rectangle';
     
-    // Регистрируем тип прямоугольника
+    // Register rectangle type
     this.registryManager.setLayerType(rectangle.dataset.id, 'rectangle');
     
     return rectangle;
