@@ -51,22 +51,34 @@ export class PatternManager {
         template: `
 <section class="w-full py-16 lg:py-32">
   <div class="container mx-auto px-4 md:px-6 lg:px-8">
-    <div class="grid grid-cols-1 gap-8 items-center lg:grid-cols-2">
-      <div data-canvas="col1" class="aspect-video relative border-2 border-dashed border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
-        <div class="absolute inset-0 grid grid-cols-6 gap-4 pointer-events-none">
-          ${Array(6).fill('<div class="grid-guides h-full bg-slate-100 dark:bg-slate-900/20"></div>').join('')}
+    <div class="flex flex-col gap-10">
+      <div data-canvas="main" class="w-full min-h-[12rem] relative border-2 border-dashed border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
+        <div class="absolute inset-0 grid grid-cols-12 gap-4 pointer-events-none">
+          ${Array(12).fill('<div class="grid-guides h-full bg-slate-100 dark:bg-slate-900/20"></div>').join('')}
         </div>
       </div>
-      <div data-canvas="col2" class="aspect-video relative border-2 border-dashed border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
-        <div class="absolute inset-0 grid grid-cols-6 gap-4 pointer-events-none">
-          ${Array(6).fill('<div class="grid-guides h-full bg-slate-100 dark:bg-slate-900/20"></div>').join('')}
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div data-canvas="col1" class="aspect-square relative border-2 border-dashed border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
+          <div class="absolute inset-0 grid grid-cols-6 gap-4 pointer-events-none">
+            ${Array(6).fill('<div class="grid-guides h-full bg-slate-100 dark:bg-slate-900/20"></div>').join('')}
+          </div>
+        </div>
+        <div data-canvas="col2" class="aspect-square relative border-2 border-dashed border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
+          <div class="absolute inset-0 grid grid-cols-6 gap-4 pointer-events-none">
+            ${Array(6).fill('<div class="grid-guides h-full bg-slate-100 dark:bg-slate-900/20"></div>').join('')}
+          </div>
+        </div>
+        <div data-canvas="col3" class="aspect-square relative border-2 border-dashed border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
+          <div class="absolute inset-0 grid grid-cols-6 gap-4 pointer-events-none">
+            ${Array(6).fill('<div class="grid-guides h-full bg-slate-100 dark:bg-slate-900/20"></div>').join('')}
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
         `,
-        canvases: ['col1', 'col2']
+        canvases: ['main', 'col1', 'col2', 'col3']
       }
     };
 
