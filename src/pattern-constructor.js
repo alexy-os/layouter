@@ -74,23 +74,11 @@ export class PatternConstructor {
   // Canvas types
   static canvases = {
     full: (name) => `
-      <div data-canvas="${name}" class="w-full aspect-[2/1] relative border-2 border-dashed border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
-        <div class="absolute inset-0 grid grid-cols-12 gap-4 md:gap-6 lg:gap-8 pointer-events-none">
-          ${Array(12).fill('<div class="grid-guides h-full bg-slate-100 dark:bg-slate-900/20"></div>').join('')}
-        </div>
-      </div>`,
+      <div data-canvas="${name}" class="w-full aspect-[2/1] relative border-2 border-dashed border-slate-200 dark:border-slate-700 bg-transparent rounded-lg"></div>`,
     square: (name) => `
-      <div data-canvas="${name}" class="aspect-square relative border-2 border-dashed border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
-        <div class="absolute inset-0 grid grid-cols-6 gap-4 md:gap-6 lg:gap-8 pointer-events-none">
-          ${Array(4).fill('<div class="grid-guides h-full bg-slate-100 dark:bg-slate-900/20"></div>').join('')}
-        </div>
-      </div>`,
+      <div data-canvas="${name}" class="aspect-square relative border-2 border-dashed border-slate-200 dark:border-slate-700 bg-transparent rounded-lg"></div>`,
     header: (name) => `
-      <div data-canvas="${name}" class="w-full min-h-[12rem] relative border-2 border-dashed border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
-        <div class="absolute inset-0 grid grid-cols-12 gap-4 md:gap-6 lg:gap-8 pointer-events-none">
-          ${Array(12).fill('<div class="grid-guides h-full bg-slate-100 dark:bg-slate-900/20"></div>').join('')}
-        </div>
-      </div>`
+      <div data-canvas="${name}" class="w-full min-h-[12rem] relative border-2 border-dashed border-slate-200 dark:border-slate-700 bg-transparent rounded-lg"></div>`
   };
 
   // Preview configuration for the sidebar
@@ -235,24 +223,48 @@ export class PatternConstructor {
 
   static initializeGridToggle() {
     const gridToggleBtn = document.getElementById('gridToggleBtn');
-    if (!gridToggleBtn) return;
+    const canvas = document.getElementById('canvas');
+    if (!gridToggleBtn || !canvas) return;
 
-    this.isGridVisible = true; // Начальное состояние сетки
-
-    gridToggleBtn.addEventListener('click', () => {
-      const allCanvases = document.querySelectorAll('[data-canvas]');
+    this.isGridVisible = true;
+    
+    // Находим существующую сетку
+    const existingGrid = canvas.querySelector('.grid');
+    if (existingGrid) {
+      // Устанавливаем высокий z-index и обновляем стили
+      existingGrid.className = 'grid absolute inset-0 grid-cols-12 gap-4 pointer-events-none z-50';
+      existingGrid.innerHTML = Array(12)
+        .fill('<div class="h-full bg-slate-100/30 dark:bg-slate-700/30"></div>')
+        .join('');
       
-      this.isGridVisible = !this.isGridVisible;
-      
-      allCanvases.forEach(canvas => {
-        const gridGuides = canvas.querySelectorAll('.grid-guides');
-        gridGuides.forEach(guide => {
-          guide.classList.toggle('hidden', !this.isGridVisible);
-        });
+      gridToggleBtn.addEventListener('click', () => {
+        this.isGridVisible = !this.isGridVisible;
+        existingGrid.classList.toggle('opacity-0', !this.isGridVisible);
+        gridToggleBtn.classList.toggle('active', this.isGridVisible);
       });
       
+      return;
+    }
+
+    // Если сетки нет, создаем новую
+    const gridOverlay = document.createElement('div');
+    gridOverlay.className = 'grid absolute inset-0 grid-cols-12 gap-4 pointer-events-none z-50';
+    gridOverlay.innerHTML = Array(12)
+      .fill('<div class="h-full bg-slate-100/30 dark:bg-slate-700/30"></div>')
+      .join('');
+
+    // Добавляем сетку в начало canvas, чтобы она была под всеми элементами
+    canvas.insertBefore(gridOverlay, canvas.firstChild);
+
+    gridToggleBtn.addEventListener('click', () => {
+      this.isGridVisible = !this.isGridVisible;
+      gridOverlay.classList.toggle('opacity-0', !this.isGridVisible);
       gridToggleBtn.classList.toggle('active', this.isGridVisible);
     });
+
+    // Сразу показываем сетку
+    gridOverlay.classList.remove('opacity-0');
+    gridToggleBtn.classList.add('active');
   }
 
   // Method for rendering patterns preview in the sidebar
@@ -282,11 +294,12 @@ export class PatternConstructor {
       patternsContainer.appendChild(patternElement);
     });
 
-    // Add the initialization call to the end of the method
-    this.initializeGridToggle();
-
     // Add event handlers
     this.initializePatternSelection(container);
+    
+    // Initialize grid toggle after patterns are rendered
+    console.log('Calling initializeGridToggle');
+    this.initializeGridToggle();
   }
 
   // Initialization of event handlers

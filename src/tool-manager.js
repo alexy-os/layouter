@@ -21,7 +21,6 @@ export class ToolManager {
 
     this.initToolButtons();
     this.initDeleteButton();
-    this.initGridSystem();
   }
 
   initToolButtons() {
@@ -36,7 +35,7 @@ export class ToolManager {
           const layer = this.layerManager.createRectangleLayer(
             32, // First column
             32, // Fixed Y position
-            176, // Width: 3 columns
+            144, // Width: 36 units (tailwind w-36)
             64, // Height: 24 units (tailwind h-24)
             'xl' // Border radius
           );
@@ -72,11 +71,6 @@ export class ToolManager {
         this.propertyManager.deselectAllLayers();
       }
     });
-  }
-
-  initGridSystem() {
-    // Always show grid
-    this.canvas.classList.add('show-grid');
   }
 
   snapToGrid(value) {
