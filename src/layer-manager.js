@@ -8,6 +8,9 @@ export class LayerManager {
     this.propertyManager = null; // Will be set after initialization
     this.initLayerSorting();
     this.nextId = 1;
+    this.selectedLayer = null;
+    this.activeCanvas = null;
+    this.onLayersChange = null;
 
     // Add container dimensions
     this.CONTAINER_WIDTH = 1024;
@@ -38,9 +41,6 @@ export class LayerManager {
       '6': '1.5rem',
       '8': '2rem'
     };
-
-    // Add tracking of the active canvas
-    this.activeCanvas = null;
   }
 
   getClosestTailwindValue(value, mapping) {
@@ -293,6 +293,8 @@ export class LayerManager {
       this.updateLayerList();
     }
     
+    if (this.onLayersChange) this.onLayersChange();
+    
     return layerData;
   }
 
@@ -314,6 +316,8 @@ export class LayerManager {
 
     // Update layer list
     this.updateLayerList();
+
+    if (this.onLayersChange) this.onLayersChange();
   }
 
   getLayers() {
@@ -397,6 +401,9 @@ export class LayerManager {
     }
     
     this.layers = [];
+    this.selectedLayer = null;
+    this.updateLayerList();
+    if (this.onLayersChange) this.onLayersChange();
   }
 
   // Add method updateLayerList

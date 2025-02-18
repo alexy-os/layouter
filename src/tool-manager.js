@@ -17,7 +17,7 @@ export class ToolManager {
     this.registryManager = registryManager;
 
     this.currentTool = 'rectangle';
-    this.gridSize = 16; // 0.5rem (8px) grid size
+    this.gridSize = 8; // 0.5rem (8px) grid size
 
     this.initToolButtons();
     this.initDeleteButton();

@@ -169,6 +169,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const handlesToggleBtn = document.getElementById('handlesToggleBtn');
   let areHandlesVisible = true;
   
+  // Hide the button initially
+  handlesToggleBtn.classList.add('hidden');
+  
+  // Update the button visibility when layers change
+  layerManager.onLayersChange = () => {
+    const hasLayers = layerManager.layers.length > 0;
+    handlesToggleBtn.classList.toggle('hidden', !hasLayers);
+  };
+  
   handlesToggleBtn.addEventListener('click', () => {
     areHandlesVisible = !areHandlesVisible;
     document.body.classList.toggle('hide-handles', !areHandlesVisible);
