@@ -60,16 +60,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const layerManager = new LayerManager(canvas, layerList, registryManager);
   
-  // Заменяем создание PatternManager на рендер паттернов через конструктор
+  // Replace the creation of PatternManager with pattern rendering through the constructor
   PatternConstructor.renderPatternsPreview('patternsTab');
 
-  // Добавляем слушатель выбора паттерна
+  // Add a listener for pattern selection
   document.addEventListener('patternSelected', (e) => {
     const { pattern } = e.detail;
     layerManager.clearAllLayers();
     canvas.innerHTML = pattern.template;
     
-    // Инициализация холстов
+    // Initialize canvases
     const canvasElements = canvas.querySelectorAll('[data-canvas]');
     canvasElements.forEach(canvasElement => {
       canvasElement.style.cursor = 'pointer';
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   handlesToggleBtn.classList.add('active');
 
-  // Инициализируем первый паттерн
+  // Initialize the first pattern
   const firstPattern = PatternConstructor.getPatterns().single;
   canvas.innerHTML = firstPattern.template;
   const firstCanvas = canvas.querySelector('[data-canvas]');

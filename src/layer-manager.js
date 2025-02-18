@@ -250,7 +250,7 @@ export class LayerManager {
     text.style.minWidth = '100px';
     text.style.minHeight = '48px';
     
-    // Добавляем базовые классы для текста
+    // Add basic text classes
     text.classList.add('text-left', 'text-base');
     
     const content = document.createElement('div');

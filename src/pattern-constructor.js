@@ -1,28 +1,13 @@
-/*
-// В основном файле приложения
-document.addEventListener('DOMContentLoaded', () => {
-  // Рендерим превью паттернов
-  PatternConstructor.renderPatternsPreview('patternsTab');
-
-  // Слушаем выбор паттерна
-  document.addEventListener('patternSelected', (e) => {
-    const { patternId, pattern } = e.detail;
-    // Здесь логика применения паттерна к конструктору
-    console.log(`Selected pattern: ${patternId}`, pattern);
-  });
-});
-*/
-
 export class PatternConstructor {
-  // Базовые обертки секций
+  // Basic section wrappers
   static wrappers = {
-    // Без контейнера
+    // Without a container
     fullscreen: {
       before: `<section class="w-full">`,
       after: `</section>`,
       gridCols: 12
     },
-    // С контейнером
+    // With a container
     container: {
       before: `
 <section class="w-full py-16 lg:py-32">
@@ -34,81 +19,81 @@ export class PatternConstructor {
     }
   };
 
-  // Типы сеток
+  // Grid types
   static grids = {
     single: {
       template: `
-    <div class="flex flex-col text-center gap-8 items-center">
+    <div class="flex flex-col text-center gap-4 md:gap-6 lg:gap-8 items-center">
       {{canvas}}
     </div>`
     },
     split: {
       template: `
-    <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-4 md:gap-6 lg:gap-8">
       {{canvas}}
     </div>`
     },
     threeColumns: {
       template: `
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
       {{canvas}}
     </div>`
     },
     fourColumns: {
       template: `
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
       {{canvas}}
     </div>`
     },
     twoByTwo: {
       template: `
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
       {{canvas}}
     </div>`
     },
     headerAndThreeColumns: {
       template: `
-    <div class="flex flex-col gap-10">
+    <div class="flex flex-col gap-4 md:gap-6 lg:gap-8">
       {{header}}
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
         {{columns}}
       </div>
     </div>`
     },
     headerAndFourColumns: {
       template: `
-    <div class="flex flex-col gap-10">
+    <div class="flex flex-col gap-4 sm:gap-6 lg:gap-8">
       {{header}}
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
         {{columns}}
       </div>
     </div>`
     }
   };
 
-  // Типы холстов
+  // Canvas types
   static canvases = {
     full: (name) => `
       <div data-canvas="${name}" class="w-full aspect-[2/1] relative border-2 border-dashed border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
-        <div class="absolute inset-0 grid grid-cols-12 gap-4 pointer-events-none">
+        <div class="absolute inset-0 grid grid-cols-12 gap-4 md:gap-6 lg:gap-8 pointer-events-none">
           ${Array(12).fill('<div class="grid-guides h-full bg-slate-100 dark:bg-slate-900/20"></div>').join('')}
         </div>
       </div>`,
     square: (name) => `
       <div data-canvas="${name}" class="aspect-square relative border-2 border-dashed border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
-        <div class="absolute inset-0 grid grid-cols-6 gap-4 pointer-events-none">
-          ${Array(6).fill('<div class="grid-guides h-full bg-slate-100 dark:bg-slate-900/20"></div>').join('')}
+        <div class="absolute inset-0 grid grid-cols-6 gap-4 md:gap-6 lg:gap-8 pointer-events-none">
+          ${Array(4).fill('<div class="grid-guides h-full bg-slate-100 dark:bg-slate-900/20"></div>').join('')}
         </div>
       </div>`,
     header: (name) => `
       <div data-canvas="${name}" class="w-full min-h-[12rem] relative border-2 border-dashed border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg">
-        <div class="absolute inset-0 grid grid-cols-12 gap-4 pointer-events-none">
+        <div class="absolute inset-0 grid grid-cols-12 gap-4 md:gap-6 lg:gap-8 pointer-events-none">
           ${Array(12).fill('<div class="grid-guides h-full bg-slate-100 dark:bg-slate-900/20"></div>').join('')}
         </div>
       </div>`
   };
 
-  // Конфигурация превью для сайдбара
+  // Preview configuration for the sidebar
   static previews = {
     single: {
       label: 'Single Container',
@@ -162,13 +147,13 @@ export class PatternConstructor {
     }
   };
 
-  // Метод для создания паттерна
+  // Method for creating a pattern
   static createPattern(config) {
     const { wrapper, layout, canvasTypes, canvasNames } = config;
     
     let canvasHTML = '';
     
-    // Специальная обработка для паттернов с хедером
+    // Special handling for patterns with a header
     if (layout === 'headerAndThreeColumns' || layout === 'headerAndFourColumns') {
       const [headerType, ...columnTypes] = canvasTypes;
       const [headerName, ...columnNames] = canvasNames;
@@ -194,7 +179,7 @@ export class PatternConstructor {
     };
   }
 
-  // Примеры создания паттернов
+  // Examples of creating patterns
   static getPatterns() {
     return {
       fullscreen: this.createPattern({
@@ -270,12 +255,12 @@ export class PatternConstructor {
     });
   }
 
-  // Метод для рендеринга превью паттернов в сайдбаре
+  // Method for rendering patterns preview in the sidebar
   static renderPatternsPreview(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
-    // Заголовок секции
+    // Section header
     container.innerHTML = `
       <h3 class="text-xs font-semibold text-slate-600 dark:text-slate-400">Layout Patterns</h3>
       <div class="space-y-2"></div>
@@ -283,7 +268,7 @@ export class PatternConstructor {
 
     const patternsContainer = container.querySelector('div');
 
-    // Рендерим каждый паттерн
+    // Render each pattern
     Object.entries(this.previews).forEach(([patternId, { label, preview }]) => {
       const patternElement = document.createElement('div');
       patternElement.className = 'pattern-item bg-white p-3 rounded border border-slate-200 dark:bg-slate-800 dark:border-slate-700';
@@ -297,24 +282,24 @@ export class PatternConstructor {
       patternsContainer.appendChild(patternElement);
     });
 
-    // Добавляем вызов инициализации в конце метода
+    // Add the initialization call to the end of the method
     this.initializeGridToggle();
 
-    // Добавляем обработчики событий
+    // Add event handlers
     this.initializePatternSelection(container);
   }
 
-  // Инициализация обработчиков событий
+  // Initialization of event handlers
   static initializePatternSelection(container) {
     const patternItems = container.querySelectorAll('.pattern-item');
     patternItems.forEach(item => {
       item.addEventListener('click', () => {
-        // Убираем активный класс у всех паттернов
+        // Remove the active class from all patterns
         patternItems.forEach(p => p.classList.remove('ring-2', 'ring-blue-500'));
-        // Добавляем активный класс выбранному паттерну
+        // Add the active class to the selected pattern
         item.classList.add('ring-2', 'ring-blue-500');
         
-        // Создаем событие выбора паттерна
+        // Create a pattern selection event
         const event = new CustomEvent('patternSelected', {
           detail: {
             patternId: item.dataset.pattern,

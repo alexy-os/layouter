@@ -17,7 +17,7 @@ export class ToolManager {
     this.registryManager = registryManager;
 
     this.currentTool = 'rectangle';
-    this.gridSize = 4; // 0.5rem (8px) grid size
+    this.gridSize = 16; // 0.5rem (8px) grid size
 
     this.initToolButtons();
     this.initDeleteButton();
@@ -33,13 +33,11 @@ export class ToolManager {
     toolButtons.forEach(({button, tool}) => {
       button.addEventListener('click', () => {
         if (tool === 'rectangle') {
-          // Create rectangle at fixed position
-          const columnWidth = this.canvas.clientWidth / 12;
           const layer = this.layerManager.createRectangleLayer(
-            columnWidth, // First column
-            100, // Fixed Y position
-            columnWidth * 3, // Width: 3 columns
-            96, // Height: 24 units (tailwind h-24)
+            32, // First column
+            32, // Fixed Y position
+            176, // Width: 3 columns
+            64, // Height: 24 units (tailwind h-24)
             'xl' // Border radius
           );
           const layerData = this.layerManager.addLayer(layer, 'Rectangle');
@@ -47,13 +45,13 @@ export class ToolManager {
         } else if (tool === 'text') {
           const activeCanvas = document.querySelector('[data-canvas].active');
           if (activeCanvas) {
-            // Получаем координаты относительно активного canvas
+            // Get coordinates relative to the active canvas
             const canvasRect = activeCanvas.getBoundingClientRect();
             const layer = this.layerManager.createTextLayer(
-              0, // Начальная X позиция 
-              0  // Начальная Y позиция
+              0, // Initial X position 
+              0  // Initial Y position
             );
-            activeCanvas.appendChild(layer); // Добавляем в активный canvas
+            activeCanvas.appendChild(layer); // Add to the active canvas
             const layerData = this.layerManager.addLayer(layer, 'Text');
             this.propertyManager.selectLayer(layer);
             layer.focus();
