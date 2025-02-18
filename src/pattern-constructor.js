@@ -248,6 +248,28 @@ export class PatternConstructor {
     };
   }
 
+  static initializeGridToggle() {
+    const gridToggleBtn = document.getElementById('gridToggleBtn');
+    if (!gridToggleBtn) return;
+
+    this.isGridVisible = true; // Начальное состояние сетки
+
+    gridToggleBtn.addEventListener('click', () => {
+      const allCanvases = document.querySelectorAll('[data-canvas]');
+      
+      this.isGridVisible = !this.isGridVisible;
+      
+      allCanvases.forEach(canvas => {
+        const gridGuides = canvas.querySelectorAll('.grid-guides');
+        gridGuides.forEach(guide => {
+          guide.classList.toggle('hidden', !this.isGridVisible);
+        });
+      });
+      
+      gridToggleBtn.classList.toggle('active', this.isGridVisible);
+    });
+  }
+
   // Метод для рендеринга превью паттернов в сайдбаре
   static renderPatternsPreview(containerId) {
     const container = document.getElementById(containerId);
@@ -274,6 +296,9 @@ export class PatternConstructor {
 
       patternsContainer.appendChild(patternElement);
     });
+
+    // Добавляем вызов инициализации в конце метода
+    this.initializeGridToggle();
 
     // Добавляем обработчики событий
     this.initializePatternSelection(container);
