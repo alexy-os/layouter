@@ -91,27 +91,27 @@ export class ExportManager {
       }
     });
 
-    const fullHtml = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Exported Layout</title>
-      <script src="https://cdn.tailwindcss.com"></script>
-      <script>
-        tailwind.config = {
-          darkMode: 'class',
-          theme: {}
-        }
-      </script>
-    </head>
-    <body class="bg-white dark:bg-gray-900">
-      ${container.innerHTML}
-    </body>
-    </html>`;
+    const fullHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exported Layout</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {}
+    }
+  </script>
+</head>
+<body class="bg-white dark:bg-gray-900">
+  ${container.innerHTML}
+</body>
+</html>`;
 
-    this.downloadHtml(fullHtml);
+    const formattedHtml = this.prettyHtml(fullHtml);
+    this.downloadHtml(formattedHtml);
     this.showNotification('Layout successfully exported');
   }
 
@@ -217,5 +217,35 @@ export class ExportManager {
 
     document.body.appendChild(notification);
     setTimeout(() => notification.remove(), 3000);
+  }
+
+  prettyHtml(html) {
+    const div = document.createElement('div');
+    div.innerHTML = html.trim();
+    
+    return this.formatNode(div, 0).innerHTML
+      .replace(/^\s*[\r\n]/gm, '')
+      .replace(/^/g, '\n')
+      .replace(/\n\s*\n/g, '\n');
+  }
+
+  formatNode(node, level) {
+    const indentBefore = new Array(level++ + 1).join('  ');
+    const indentAfter = new Array(level - 1).join('  ');
+    let textNode;
+
+    for (let i = 0; i < node.children.length; i++) {
+      textNode = document.createTextNode('\n' + indentBefore);
+      node.insertBefore(textNode, node.children[i]);
+
+      this.formatNode(node.children[i], level);
+
+      if (node.lastElementChild === node.children[i]) {
+        textNode = document.createTextNode('\n' + indentAfter);
+        node.appendChild(textNode);
+      }
+    }
+
+    return node;
   }
 }
