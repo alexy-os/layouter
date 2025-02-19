@@ -1,85 +1,110 @@
-# BuildY - Visual Layout Builder
+# Layouter UI
 
-BuildY - это визуальный конструктор макетов с использованием Tailwind CSS и shadcn компонентов.
+## The Most Elegant Approach to UI Design
 
-## Начало работы
+Layouter is not just another design tool – it's a philosophical statement about simplicity. While others offer endless toolbars that would make Swiss Army knives blush, we've distilled interface design to its purest essence: a rectangle and some text.
 
-### Выбор компонентов
-1. Откройте демо-сайт: [https://vue-uikit-shadcn.vercel.app/](https://vue-uikit-shadcn.vercel.app/)
-2. Просматривайте компоненты и добавляйте понравившиеся в избранное (значок закладки справа)
-3. В навбаре появится кнопка "BuildY" после добавления первого компонента
+## The Power of Two
 
-### Настройка темы
-- Используйте значок настроек в навбаре для конфигурации:
-  - Шрифты
-  - Цветовая схема
-  - Радиус скругления
+Just as a proper cup of Earl Grey needs only tea and water, Layouter needs only two tools:
 
-### Конструктор BuildY
+### 🟦 The Rectangle
+The foundation of all interfaces. Think of it as the Lego bricks that built an empire:
+- Buttons? A rectangle with rounded corners
+- Cards? A rectangle with a shadow
+- Headers? A rather wide rectangle
+- Modals? A rectangle that knows how to make an entrance
 
-1. Нажмите кнопку "BuildY" для перехода в конструктор
-2. Нажмите "Get Blocks" для загрузки выбранных компонентов
+### 📝 The Text
+Because even the finest architecture needs proper signage:
+- Perfectly positioned
+- Tailwind-powered styling
+- No unnecessary formatting faff
+- Just the essentials: size, alignment, and weight
 
-### Инструменты
+## Tailwind: Our Faithful Butler
 
-#### Tools
-- Настройка макета
-- Доступ к конфигурации
-- Простой редактор в навбаре
+Every rectangle and text element is impeccably dressed in Tailwind utilities:
+```html
+<!-- A properly dressed rectangle -->
+<div class="absolute bg-blue-500 rounded-xl w-48 h-24">
+  <!-- A well-mannered text -->
+  <span class="text-gray-800 text-xl font-bold text-center">
+    Precisely positioned, old chap!
+  </span>
+</div>
+```
 
-#### Взаимодействие
-- Фиолетовая подсветка для секций
-- Подсветка отдельных элементов при наведении
+## The BuildY Integration: a match made with love for HinddY
 
-### Экспорт
+See [buildy](https://github.com/alexy-os/layouter/tree/main/buildy) for more details.
 
-1. Экспортируйте в HTML когда макет готов
-2. Доступны два режима:
-   - Dev: Tailwind как CDN для дальнейшей разработки
-   - Prod: Стили в head для финальной версии
+Coming soon: Clever algorithms to pick shadcn/ui blocks right while drawing your rectangles in Layouter.
 
-### Дополнительные возможности
+### How It Works
+1. Draw your interface with rectangles
+2. Layouter analyses your composition
+3. BuildY suggests matching shadcn/ui components
+4. You select your favourites with a gentlemanly click
 
-#### Сохранение проекта
-- Экспорт проекта в JSON
-- Импорт ранее сохраненного проекта
+### The Roadmap
 
-#### Импорт секций
-- В навбаре доступен импорт секций
-- Поддерживается вставка любого Tailwind блока между тегами `<section>`
-- Поддержка компонентов из:
-  - [https://ui.pro.hinddy.com/components](https://ui.pro.hinddy.com/components) (HTML версия)
-  - Любые секции с поддержкой shadcn темы
+#### Phase 1: The Foundation (Current)
+- ✅ Rectangle and text tools
+- ✅ Drag-and-drop precision
+- ✅ Tailwind utility exports
+- ✅ Dark mode (for those long designers nights)
 
-### Готовые примеры
+#### Phase 2: The Intelligence (Q1 2025)
+- 🔄 Pattern recognition for common UI elements
+- 🔄 Integration with shadcn/ui component library
+- 🔄 Smart component suggestions
+- 🔄 One-click component favouriting
 
-В папке [examples](https://github.com/alexy-os/layouter/tree/main/buildy/examples) доступны готовые наборы компонентов:
+#### Phase 3: The Refinement (Q2 2025)
+- 📅 Automatic layout optimization
+- 📅 Component variation suggestions
+- 📅 Theme customization
+- 📅 Export to BuildY projects
 
-- `all-ui-font-nunito-blue-color.json` - Полный набор компонентов с Nunito шрифтом и синей цветовой схемой
-- `buildy-starter-font-saira.json` - Компоненты из Vue Starter проекта
-- `hinddy-ui-font-nunito.json` - Компоненты из Hinddy UI
+## Getting Started
 
-Для использования:
-1. Откройте BuildY. В Tools жмите: Reset и затем Import.
-2. Импортируйте нужный JSON файл из папки [examples](https://github.com/alexy-os/layouter/tree/main/buildy/examples)
-3. Настройте под свои потребности
+```bash
+# Clone with British precision
+git clone https://github.com/alexy-os/layouter.git
 
-### Темы
+# Enter the establishment
+cd layouter
 
-Пройдите на сайт [shadcn/ui](https://ui.shadcn.com/themes) и выберите тему. Затем, в настройках макета в Tools жмите: Layout Setting и в поле Tailwind Styles вставьте код темы. Сохраните настройки и перезагрузите страницу.
+# Start the service
+# (No tea will be served, unfortunately)
+```
 
-Поддержка dark mode из коробки. Возможна реализация собственной темы через настройки макета.
+## The Philosophy
 
-## Рекомендации
+Why complicate what can be simple? With the approach of true perfectionists:
+- Every interface is a composition of rectangles
+- Every rectangle can be a component
+- Every component should be precisely placed
+- And everything should work together like a well-oiled machine
 
-1. Изучите все доступные блоки перед началом работы
-2. Настройте тему до начала компоновки макета
-3. Используйте экспорт в JSON для сохранения промежуточных версий
-4. В Dev режиме экспорта можно дорабатывать стили через Tailwind
-5. Prod режим использовать только для финальной версии
+## The Future
 
-## Поддержка
+Imagine designing your interface as easily as arranging furniture in a proper English manor:
+1. Draw your layout with rectangles
+2. Add text where needed
+3. Click suggested components
+4. Export to BuildY
+5. Have a cup of tea while your interface assembles itself
 
-Telegram: [@alexy_os](https://t.me/alexy_os)
+## Contributing
 
-BuildY поддерживает все современные браузеры. Рекомендуется использовать десктопную версию для удобства работы.
+We welcome contributions with the same enthusiasm as a proper English garden welcomes spring flowers. Do mind the coding standards – we're quite particular about those.
+
+## License
+
+MIT - As free as speech, not as free as tea.
+
+---
+
+*"In simplicity lies the ultimate sophistication" - Leonardo da Vinci (who would have loved Layouter, we're quite certain)*
