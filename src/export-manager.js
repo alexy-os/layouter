@@ -1,4 +1,28 @@
 export class ExportManager {
+  static utilityClasses = {
+    layer: [
+      'layer',
+      'draggable',
+      'selected',
+      'active',
+      'border-2',
+      'border-dashed',
+      'border-slate-200',
+      'dark:border-slate-700',
+      'bg-transparent',
+      'rounded-lg'
+    ],
+    canvas: [
+      'border-2',
+      'border-dashed', 
+      'border-slate-200',
+      'dark:border-slate-700',
+      'bg-transparent',
+      'rounded-lg',
+      'active'
+    ]
+  };
+
   constructor(layerManager, registryManager) {
     this.layerManager = layerManager;
     this.registryManager = registryManager;
@@ -96,7 +120,11 @@ export class ExportManager {
 
     if (layer.dataset.type === 'text') {
       const textClasses = Array.from(layer.classList)
-        .filter(cls => (cls.startsWith('text-') || cls.startsWith('font-')) && cls.trim());
+        .filter(cls => {
+          return (cls.startsWith('text-') || cls.startsWith('font-')) && 
+                 !ExportManager.utilityClasses.layer.includes(cls) &&
+                 cls.trim();
+        });
       
       if (textClasses.length > 0) {
         div.classList.add(...textClasses);
@@ -108,10 +136,12 @@ export class ExportManager {
       }
     } else {
       const bgClass = Array.from(layer.classList)
-        .find(cls => cls.startsWith('bg-')) || 'bg-blue-500';
+        .find(cls => cls.startsWith('bg-') && 
+              !ExportManager.utilityClasses.layer.includes(cls)) || 'bg-blue-500';
       
       const roundedClass = Array.from(layer.classList)
-        .find(cls => cls.startsWith('rounded-'));
+        .find(cls => cls.startsWith('rounded-') && 
+              !ExportManager.utilityClasses.layer.includes(cls));
       
       div.classList.add(bgClass);
       if (roundedClass) {
@@ -134,12 +164,30 @@ export class ExportManager {
       `h-[${height}%]`
     );
 
+    if (div.getAttribute('style') === '') {
+      div.removeAttribute('style');
+    }
+
     return div;
   }
 
   getCurrentPattern() {
     const canvas = document.getElementById('canvas');
-    return canvas?.firstElementChild?.outerHTML || null;
+    if (!canvas?.firstElementChild) return null;
+
+    const pattern = canvas.firstElementChild.cloneNode(true);
+    
+    pattern.querySelectorAll('[data-canvas]').forEach(canvas => {
+      ExportManager.utilityClasses.canvas.forEach(cls => {
+        canvas.classList.remove(cls);
+      });
+      
+      if (canvas.getAttribute('style') === '') {
+        canvas.removeAttribute('style');
+      }
+    });
+
+    return pattern.outerHTML;
   }
 
   downloadHtml(html) {

@@ -71,65 +71,78 @@ export class PatternConstructor {
     }
   };
 
-  // Canvas types
-  static canvases = {
-    full: (name) => `
-      <div data-canvas="${name}" class="w-full aspect-[2/1] relative border-2 border-dashed border-slate-200 dark:border-slate-700 bg-transparent rounded-lg"></div>`,
-    square: (name) => `
-      <div data-canvas="${name}" class="aspect-square relative border-2 border-dashed border-slate-200 dark:border-slate-700 bg-transparent rounded-lg"></div>`,
-    header: (name) => `
-      <div data-canvas="${name}" class="w-full min-h-[12rem] relative border-2 border-dashed border-slate-200 dark:border-slate-700 bg-transparent rounded-lg"></div>`
+  // Utility classes for constructor visualization
+  static utilityClasses = {
+    canvas: {
+      border: 'border-2 border-dashed border-slate-200 dark:border-slate-700',
+      visual: 'bg-transparent rounded-lg',
+      state: 'active'
+    },
+    preview: {
+      wrapper: 'bg-slate-100 dark:bg-slate-700 rounded',
+      placeholder: 'bg-blue-500/20 border-2 border-dashed border-blue-500 rounded'
+    }
   };
 
-  // Preview configuration for the sidebar
+  // Canvas types with separated structure and utility classes
+  static canvases = {
+    full: (name) => `
+      <div data-canvas="${name}" class="w-full aspect-[2/1] relative ${this.utilityClasses.canvas.border} ${this.utilityClasses.canvas.visual}"></div>`,
+    square: (name) => `
+      <div data-canvas="${name}" class="aspect-square relative ${this.utilityClasses.canvas.border} ${this.utilityClasses.canvas.visual}"></div>`,
+    header: (name) => `
+      <div data-canvas="${name}" class="w-full min-h-[12rem] relative ${this.utilityClasses.canvas.border} ${this.utilityClasses.canvas.visual}"></div>`
+  };
+
+  // Preview configuration with separated utility classes
   static previews = {
     single: {
       label: 'Single Container',
       preview: `
-        <div class="aspect-[2/1] bg-slate-100 dark:bg-slate-700 rounded flex items-center justify-center">
-          <div class="w-2/3 h-1/2 bg-blue-500/20 border-2 border-dashed border-blue-500 rounded"></div>
+        <div class="${this.utilityClasses.preview.wrapper} aspect-[2/1] flex items-center justify-center">
+          <div class="w-2/3 h-1/2 ${this.utilityClasses.preview.placeholder}"></div>
         </div>`
     },
     split: {
       label: 'Split Layout',
       preview: `
-        <div class="aspect-[2/1] bg-slate-100 dark:bg-slate-700 rounded flex items-center justify-center gap-2">
-          <div class="w-1/2 aspect-square bg-blue-500/20 border-2 border-dashed border-blue-500 rounded"></div>
-          <div class="w-1/2 aspect-square bg-blue-500/20 border-2 border-dashed border-blue-500 rounded"></div>
+        <div class="${this.utilityClasses.preview.wrapper} aspect-[2/1] flex items-center justify-center gap-2">
+          <div class="w-1/2 aspect-square ${this.utilityClasses.preview.placeholder}"></div>
+          <div class="w-1/2 aspect-square ${this.utilityClasses.preview.placeholder}"></div>
         </div>`
     },
     columns: {
       label: 'Features Layout',
       preview: `
-        <div class="aspect-[2/1] bg-slate-100 dark:bg-slate-700 rounded flex flex-col gap-2 p-2">
-          <div class="w-full h-1/2 bg-blue-500/20 border-2 border-dashed border-blue-500 rounded"></div>
+        <div class="${this.utilityClasses.preview.wrapper} aspect-[2/1] flex flex-col gap-2 p-2">
+          <div class="w-full h-1/2 ${this.utilityClasses.preview.placeholder}"></div>
           <div class="flex gap-2 h-1/2">
-            <div class="w-1/3 h-full bg-blue-500/20 border-2 border-dashed border-blue-500 rounded"></div>
-            <div class="w-1/3 h-full bg-blue-500/20 border-2 border-dashed border-blue-500 rounded"></div>
-            <div class="w-1/3 h-full bg-blue-500/20 border-2 border-dashed border-blue-500 rounded"></div>
+            <div class="w-1/3 h-full ${this.utilityClasses.preview.placeholder}"></div>
+            <div class="w-1/3 h-full ${this.utilityClasses.preview.placeholder}"></div>
+            <div class="w-1/3 h-full ${this.utilityClasses.preview.placeholder}"></div>
           </div>
         </div>`
     },
     grid: {
       label: 'Grid Layout',
       preview: `
-        <div class="aspect-[2/1] bg-slate-100 dark:bg-slate-700 rounded grid grid-cols-2 gap-2 p-2">
-          <div class="bg-blue-500/20 border-2 border-dashed border-blue-500 rounded"></div>
-          <div class="bg-blue-500/20 border-2 border-dashed border-blue-500 rounded"></div>
-          <div class="bg-blue-500/20 border-2 border-dashed border-blue-500 rounded"></div>
-          <div class="bg-blue-500/20 border-2 border-dashed border-blue-500 rounded"></div>
+        <div class="${this.utilityClasses.preview.wrapper} grid grid-cols-2 gap-2 p-2">
+          <div class="${this.utilityClasses.preview.placeholder}"></div>
+          <div class="${this.utilityClasses.preview.placeholder}"></div>
+          <div class="${this.utilityClasses.preview.placeholder}"></div>
+          <div class="${this.utilityClasses.preview.placeholder}"></div>
         </div>`
     },
     headerAndFourColumns: {
       label: 'Header & Columns',
       preview: `
-        <div class="aspect-[2/1] bg-slate-100 dark:bg-slate-700 rounded flex flex-col gap-2 p-2">
-          <div class="w-full h-1/3 bg-blue-500/20 border-2 border-dashed border-blue-500 rounded"></div>
+        <div class="${this.utilityClasses.preview.wrapper} flex flex-col gap-2 p-2">
+          <div class="w-full h-1/3 ${this.utilityClasses.preview.placeholder}"></div>
           <div class="flex gap-2 h-2/3">
-            <div class="w-1/4 h-full bg-blue-500/20 border-2 border-dashed border-blue-500 rounded"></div>
-            <div class="w-1/4 h-full bg-blue-500/20 border-2 border-dashed border-blue-500 rounded"></div>
-            <div class="w-1/4 h-full bg-blue-500/20 border-2 border-dashed border-blue-500 rounded"></div>
-            <div class="w-1/4 h-full bg-blue-500/20 border-2 border-dashed border-blue-500 rounded"></div>
+            <div class="w-1/4 h-full ${this.utilityClasses.preview.placeholder}"></div>
+            <div class="w-1/4 h-full ${this.utilityClasses.preview.placeholder}"></div>
+            <div class="w-1/4 h-full ${this.utilityClasses.preview.placeholder}"></div>
+            <div class="w-1/4 h-full ${this.utilityClasses.preview.placeholder}"></div>
           </div>
         </div>`
     }
