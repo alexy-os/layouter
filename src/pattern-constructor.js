@@ -241,10 +241,8 @@ export class PatternConstructor {
 
     this.isGridVisible = true;
     
-    // Находим существующую сетку
     const existingGrid = canvas.querySelector('.grid');
     if (existingGrid) {
-      // Устанавливаем высокий z-index и обновляем стили
       existingGrid.className = 'grid absolute inset-0 grid-cols-12 gap-4 pointer-events-none z-50';
       existingGrid.innerHTML = Array(12)
         .fill('<div class="h-full bg-slate-100/30 dark:bg-slate-700/30"></div>')
@@ -259,14 +257,12 @@ export class PatternConstructor {
       return;
     }
 
-    // Если сетки нет, создаем новую
     const gridOverlay = document.createElement('div');
     gridOverlay.className = 'grid absolute inset-0 grid-cols-12 gap-4 pointer-events-none z-50';
     gridOverlay.innerHTML = Array(12)
       .fill('<div class="h-full bg-slate-100/30 dark:bg-slate-700/30"></div>')
       .join('');
 
-    // Добавляем сетку в начало canvas, чтобы она была под всеми элементами
     canvas.insertBefore(gridOverlay, canvas.firstChild);
 
     gridToggleBtn.addEventListener('click', () => {
@@ -275,7 +271,6 @@ export class PatternConstructor {
       gridToggleBtn.classList.toggle('active', this.isGridVisible);
     });
 
-    // Сразу показываем сетку
     gridOverlay.classList.remove('opacity-0');
     gridToggleBtn.classList.add('active');
   }

@@ -97,12 +97,14 @@ export class ToolManager {
   }
 
   updateCursor(tool) {
+    this.canvas.classList.remove('cursor-default', 'cursor-text');
+    
     switch(tool) {
       case 'rectangle':
-        this.canvas.style.cursor = 'default';
+        this.canvas.classList.add('cursor-default');
         break;
       case 'text':
-        this.canvas.style.cursor = 'text';
+        this.canvas.classList.add('cursor-text');
         break;
     }
   }

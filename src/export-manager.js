@@ -10,7 +10,12 @@ export class ExportManager {
       'border-slate-200',
       'dark:border-slate-700',
       'bg-transparent',
-      'rounded-lg'
+      'rounded-lg',
+      'cursor-move',
+      'cursor-pointer',
+      'cursor-default',
+      'cursor-text',
+      'pointer-events-none'
     ],
     canvas: [
       'border-2',
@@ -19,7 +24,9 @@ export class ExportManager {
       'dark:border-slate-700',
       'bg-transparent',
       'rounded-lg',
-      'active'
+      'active',
+      'cursor-pointer',
+      'cursor-default'
     ]
   };
 
@@ -69,12 +76,6 @@ export class ExportManager {
     const container = document.createElement('div');
     container.innerHTML = pattern;
 
-    container.querySelectorAll('*').forEach(el => {
-      if (el.getAttribute('style') === '') {
-        el.removeAttribute('style');
-      }
-    });
-
     container.querySelectorAll('[data-canvas]').forEach(canvas => {
       const canvasId = canvas.dataset.canvas;
       const originalCanvas = document.querySelector(`[data-canvas="${canvasId}"]`);
@@ -87,7 +88,8 @@ export class ExportManager {
         canvas.innerHTML = '';
         layers.forEach(layer => canvas.appendChild(layer));
         canvas.removeAttribute('data-canvas');
-        canvas.style.cursor = '';
+        
+        canvas.classList.remove('cursor-pointer', 'cursor-default', 'cursor-text');
       }
     });
 
@@ -129,6 +131,7 @@ export class ExportManager {
         .filter(cls => {
           return (cls.startsWith('text-') || cls.startsWith('font-')) && 
                  !ExportManager.utilityClasses.layer.includes(cls) &&
+                 !cls.startsWith('cursor-') &&
                  cls.trim();
         });
       
@@ -170,10 +173,6 @@ export class ExportManager {
       `h-[${height}%]`
     );
 
-    if (div.getAttribute('style') === '') {
-      div.removeAttribute('style');
-    }
-
     return div;
   }
 
@@ -182,12 +181,6 @@ export class ExportManager {
     if (!canvas?.firstElementChild) return null;
 
     const pattern = canvas.firstElementChild.cloneNode(true);
-    
-    pattern.querySelectorAll('*').forEach(el => {
-      if (el.getAttribute('style') === '') {
-        el.removeAttribute('style');
-      }
-    });
     
     pattern.querySelectorAll('[data-canvas]').forEach(canvas => {
       ExportManager.utilityClasses.canvas.forEach(cls => {
@@ -223,7 +216,10 @@ export class ExportManager {
     const div = document.createElement('div');
     div.innerHTML = html.trim();
     
-    return this.formatNode(div, 0).innerHTML
+    this.formatNode(div, 0);
+    
+    return div.innerHTML
+      .replace(/^/, '<!DOCTYPE html>\n')
       .replace(/^\s*[\r\n]/gm, '')
       .replace(/^/g, '\n')
       .replace(/\n\s*\n/g, '\n');

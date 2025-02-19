@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize canvases
     const canvasElements = canvas.querySelectorAll('[data-canvas]');
     canvasElements.forEach(canvasElement => {
-      canvasElement.style.cursor = 'pointer';
+      canvasElement.classList.add('cursor-pointer');
       
       // Add mouse click handler
       canvasElement.addEventListener('click', (e) => {
@@ -98,12 +98,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function setActiveCanvas(canvasElement) {
     const activeCanvas = canvas.querySelector('[data-canvas].active');
     if (activeCanvas) {
-      activeCanvas.classList.remove('active');
-      activeCanvas.style.cursor = 'pointer';
+      activeCanvas.classList.remove('active', 'cursor-default');
+      activeCanvas.classList.add('cursor-pointer');
     }
     
-    canvasElement.classList.add('active');
-    canvasElement.style.cursor = 'default';
+    canvasElement.classList.add('active', 'cursor-default');
+    canvasElement.classList.remove('cursor-pointer');
     layerManager.setActiveCanvas(canvasElement);
   }
 
