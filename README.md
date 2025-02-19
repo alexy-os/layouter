@@ -53,18 +53,20 @@ BuildY - это визуальный конструктор макетов с и
 
 ### Готовые примеры
 
-В папке `examples` доступны готовые наборы компонентов:
+В папке [examples](https://github.com/alexy-os/layouter/tree/main/buildy/examples) доступны готовые наборы компонентов:
 
-- `all-ui-font-nunito-blue-color/` - Полный набор компонентов с Nunito шрифтом и синей цветовой схемой
-- `vue-starter/` - Компоненты из Vue Starter проекта
-- `hinddy/` - Компоненты из Hinddy UI
+- `all-ui-font-nunito-blue-color.json` - Полный набор компонентов с Nunito шрифтом и синей цветовой схемой
+- `buildy-starter-font-saira.json` - Компоненты из Vue Starter проекта
+- `hinddy-ui-font-nunito.json` - Компоненты из Hinddy UI
 
 Для использования:
-1. Откройте BuildY
-2. Импортируйте нужный JSON файл из папки examples
+1. Откройте BuildY. В Tools жмите: Reset и затем Import.
+2. Импортируйте нужный JSON файл из папки [examples](https://github.com/alexy-os/layouter/tree/main/buildy/examples)
 3. Настройте под свои потребности
 
 ### Темы
+
+Пройдите на сайт [shadcn/ui](https://ui.shadcn.com/themes) и выберите тему. Затем, в настройках макета в Tools жмите: Layout Setting и в поле Tailwind Styles вставьте код темы. Сохраните настройки и перезагрузите страницу.
 
 Поддержка dark mode из коробки. Возможна реализация собственной темы через настройки макета.
 
@@ -77,5 +79,7 @@ BuildY - это визуальный конструктор макетов с и
 5. Prod режим использовать только для финальной версии
 
 ## Поддержка
+
+Telegram: [@alexy_os](https://t.me/alexy_os)
 
 BuildY поддерживает все современные браузеры. Рекомендуется использовать десктопную версию для удобства работы.
