@@ -69,6 +69,12 @@ export class ExportManager {
     const container = document.createElement('div');
     container.innerHTML = pattern;
 
+    container.querySelectorAll('*').forEach(el => {
+      if (el.getAttribute('style') === '') {
+        el.removeAttribute('style');
+      }
+    });
+
     container.querySelectorAll('[data-canvas]').forEach(canvas => {
       const canvasId = canvas.dataset.canvas;
       const originalCanvas = document.querySelector(`[data-canvas="${canvasId}"]`);
@@ -177,14 +183,16 @@ export class ExportManager {
 
     const pattern = canvas.firstElementChild.cloneNode(true);
     
+    pattern.querySelectorAll('*').forEach(el => {
+      if (el.getAttribute('style') === '') {
+        el.removeAttribute('style');
+      }
+    });
+    
     pattern.querySelectorAll('[data-canvas]').forEach(canvas => {
       ExportManager.utilityClasses.canvas.forEach(cls => {
         canvas.classList.remove(cls);
       });
-      
-      if (canvas.getAttribute('style') === '') {
-        canvas.removeAttribute('style');
-      }
     });
 
     return pattern.outerHTML;
