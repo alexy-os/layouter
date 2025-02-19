@@ -115,8 +115,8 @@ export class PatternConstructor {
       label: 'Features Layout',
       preview: `
         <div class="${this.utilityClasses.preview.wrapper} aspect-[2/1] flex flex-col gap-2 p-2">
-          <div class="w-full h-1/2 ${this.utilityClasses.preview.placeholder}"></div>
-          <div class="flex gap-2 h-1/2">
+          <div class="w-full h-1/3 ${this.utilityClasses.preview.placeholder}"></div>
+          <div class="flex gap-2 h-2/3">
             <div class="w-1/3 h-full ${this.utilityClasses.preview.placeholder}"></div>
             <div class="w-1/3 h-full ${this.utilityClasses.preview.placeholder}"></div>
             <div class="w-1/3 h-full ${this.utilityClasses.preview.placeholder}"></div>
@@ -126,17 +126,17 @@ export class PatternConstructor {
     grid: {
       label: 'Grid Layout',
       preview: `
-        <div class="${this.utilityClasses.preview.wrapper} grid grid-cols-2 gap-2 p-2">
-          <div class="${this.utilityClasses.preview.placeholder}"></div>
-          <div class="${this.utilityClasses.preview.placeholder}"></div>
-          <div class="${this.utilityClasses.preview.placeholder}"></div>
-          <div class="${this.utilityClasses.preview.placeholder}"></div>
+        <div class="${this.utilityClasses.preview.wrapper} aspect-[2/1] grid grid-cols-2 gap-2 p-2">
+          <div class="aspect-square ${this.utilityClasses.preview.placeholder}"></div>
+          <div class="aspect-square ${this.utilityClasses.preview.placeholder}"></div>
+          <div class="aspect-square ${this.utilityClasses.preview.placeholder}"></div>
+          <div class="aspect-square ${this.utilityClasses.preview.placeholder}"></div>
         </div>`
     },
     headerAndFourColumns: {
       label: 'Header & Columns',
       preview: `
-        <div class="${this.utilityClasses.preview.wrapper} flex flex-col gap-2 p-2">
+        <div class="${this.utilityClasses.preview.wrapper} aspect-[2/1] flex flex-col gap-2 p-2">
           <div class="w-full h-1/3 ${this.utilityClasses.preview.placeholder}"></div>
           <div class="flex gap-2 h-2/3">
             <div class="w-1/4 h-full ${this.utilityClasses.preview.placeholder}"></div>
