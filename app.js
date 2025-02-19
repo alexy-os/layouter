@@ -73,11 +73,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const canvasElements = canvas.querySelectorAll('[data-canvas]');
     canvasElements.forEach(canvasElement => {
       canvasElement.style.cursor = 'pointer';
+      
+      // Add mouse click handler
       canvasElement.addEventListener('click', (e) => {
         if (e.target === canvasElement) {
           setActiveCanvas(canvasElement);
         }
       });
+
+      // Add touch handler
+      canvasElement.addEventListener('touchstart', (e) => {
+        e.preventDefault(); // Prevent scrolling
+        if (e.target === canvasElement) {
+          setActiveCanvas(canvasElement);
+        }
+      }, { passive: false });
     });
 
     if (canvasElements.length > 0) {
