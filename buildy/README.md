@@ -1,24 +1,34 @@
 # BuildY - Visual Layout Builder
 
-BuildY - это визуальный конструктор макетов с использованием Tailwind CSS и shadcn компонентов.
+[BuildY](https://vue-uikit-shadcn.vercel.app/buildy/) - это визуальный конструктор макетов с использованием Tailwind CSS и shadcn компонентов.
 
-## Начало работы
+## Способы начать работу
 
-### Выбор компонентов
+### Вариант 1: Создание макета с нуля
+
 1. Откройте демо-сайт: [https://vue-uikit-shadcn.vercel.app/](https://vue-uikit-shadcn.vercel.app/)
 2. Просматривайте компоненты и добавляйте понравившиеся в избранное (значок закладки справа)
 3. В навбаре появится кнопка "BuildY" после добавления первого компонента
+4. Нажмите "BuildY" для перехода в конструктор
+5. Нажмите "Get Blocks" для загрузки выбранных компонентов
+
+### Вариант 2: Использование готовых проектов
+
+1. Откройте BuildY: [https://vue-uikit-shadcn.vercel.app/buildy/](https://vue-uikit-shadcn.vercel.app/buildy/)
+2. В Tools жмите: Reset и затем Import
+3. Импортируйте нужный JSON файл из папки [examples](https://github.com/alexy-os/layouter/tree/main/buildy/examples):
+   - `all-ui-font-nunito-blue-color.json` - Полный набор компонентов с Nunito шрифтом и синей цветовой схемой
+   - `buildy-starter-font-saira.json` - Компоненты из Vue Starter проекта
+   - `hinddy-ui-font-nunito.json` - Компоненты из Hinddy UI
+4. Настройте под свои потребности
+
+## Работа с конструктором
 
 ### Настройка темы
 - Используйте значок настроек в навбаре для конфигурации:
   - Шрифты
   - Цветовая схема
   - Радиус скругления
-
-### Конструктор BuildY
-
-1. Нажмите кнопку "BuildY" для перехода в конструктор
-2. Нажмите "Get Blocks" для загрузки выбранных компонентов
 
 ### Инструменты
 
@@ -50,19 +60,6 @@ BuildY - это визуальный конструктор макетов с и
 - Поддержка компонентов из:
   - [https://ui.pro.hinddy.com/components](https://ui.pro.hinddy.com/components) (HTML версия)
   - Любые секции с поддержкой shadcn темы
-
-### Готовые примеры
-
-В папке [examples](https://github.com/alexy-os/layouter/tree/main/buildy/examples) доступны готовые наборы компонентов:
-
-- `all-ui-font-nunito-blue-color.json` - Полный набор компонентов с Nunito шрифтом и синей цветовой схемой
-- `buildy-starter-font-saira.json` - Компоненты из Vue Starter проекта
-- `hinddy-ui-font-nunito.json` - Компоненты из Hinddy UI
-
-Для использования:
-1. Откройте BuildY. В Tools жмите: Reset и затем Import.
-2. Импортируйте нужный JSON файл из папки [examples](https://github.com/alexy-os/layouter/tree/main/buildy/examples)
-3. Настройте под свои потребности
 
 ### Темы
 
