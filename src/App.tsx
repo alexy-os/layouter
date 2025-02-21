@@ -143,13 +143,13 @@ export default function App() {
               asChild
               className="gap-2"
             >
-              <a href="/html-v3/index.html" target="_blank" rel="noopener">
+              <a href="/html-v3/index.html" target="_blank" rel="noopener" title="Stable Version 3 (HTML)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
                   <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" />
                   <path d="m21 3-9 9" />
                   <path d="M15 3h6v6" />
                 </svg>
-                v.0.0.3 stable
+                v.0.0.3
               </a>
             </Button>
             <span className="text-xs text-muted-foreground flex items-center gap-2">
