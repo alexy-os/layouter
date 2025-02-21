@@ -1,5 +1,3 @@
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Card } from "@/components/ui/card"
 import { PatternConstructor } from "@/scripts/constructors/PatternConstructor"
@@ -11,7 +9,7 @@ interface SidebarProps {
   onThemeToggle: () => void
 }
 
-export function Sidebar({ theme, selectedPattern, onPatternSelect, onThemeToggle }: SidebarProps) {
+export function Sidebar({ selectedPattern, onPatternSelect }: SidebarProps) {
   return (
     <aside className="w-80 border-r bg-card">
       <div className="flex h-16 items-center justify-between px-4 border-b">
