@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { PatternConstructor } from './scripts/constructors/PatternConstructor';
 import { Sidebar } from "@/components/Sidebar"
@@ -12,6 +12,17 @@ export default function App() {
     }
     return 'light';
   });
+  const [isSidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 768);
+
+  // Установка начального состояния сайдбара в зависимости от размера экрана
+  useEffect(() => {
+    const handleResize = () => {
+      setSidebarOpen(window.innerWidth >= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -65,18 +76,41 @@ export default function App() {
 
   return (
     <div className="flex h-screen bg-background">
-      <Sidebar 
-        theme={theme}
-        selectedPattern={selectedPattern}
-        onPatternSelect={handlePatternSelect}
-        onThemeToggle={toggleTheme}
-      />
+      <div className={`
+        transition-all duration-300
+        ${isSidebarOpen ? 'w-80' : 'w-0'}
+        overflow-hidden md:block
+      `}>
+        <Sidebar 
+          theme={theme}
+          selectedPattern={selectedPattern}
+          onPatternSelect={handlePatternSelect}
+          onThemeToggle={toggleTheme}
+        />
+      </div>
       
       {/* Main Content */}
       <main className="flex-1 overflow-auto p-6 scrollbar-thin scrollbar-track-muted scrollbar-thumb-muted-foreground/30 hover:scrollbar-thumb-muted-foreground/50">
         <div className="max-w-5xl mx-auto">
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
+              {/* Кнопка сворачивания сайдбара */}
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => setSidebarOpen(!isSidebarOpen)}
+                className="gap-2"
+              >
+                {isSidebarOpen ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                    <path d="m15 18-6-6 6-6"/>
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                    <path d="m9 18 6-6-6-6"/>
+                  </svg>
+                )}
+              </Button>
               <Button 
                 variant="outline"
                 size="sm"
@@ -94,7 +128,7 @@ export default function App() {
               </Button>
               <span className="text-xs text-muted-foreground flex items-center gap-2">
                 <span className="animate-pulse-dot"></span>
-                v.0.0.4 (React) is currently under development
+                <a className="text-primary" href="https://github.com/alexy-os/layouter" target="_blank" rel="noopener" title="GitHub Repository">v.0.0.4</a> (React) is currently under development
               </span>
             </div>
 
