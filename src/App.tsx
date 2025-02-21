@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { PatternConstructor } from './scripts/constructors/PatternConstructor';
+import { Sidebar } from "@/components/Sidebar"
 
 export default function App() {
   const [selectedPattern, setSelectedPattern] = useState<string | null>(null);
@@ -66,96 +65,63 @@ export default function App() {
 
   return (
     <div className="flex h-screen bg-background">
-      {/* Sidebar */}
-      <aside className="w-80 border-r bg-card">
-        <div className="flex h-16 items-center justify-between px-4 border-b">
-          <h1 className="text-lg font-semibold">Layouter</h1>
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={toggleTheme}
-            className={theme === 'dark' ? 'text-primary' : 'text-muted-foreground'}
-          >
-            {theme === 'dark' ? (
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-                <circle cx="12" cy="12" r="4"></circle>
-                <path d="M12 2v2"></path>
-                <path d="M12 20v2"></path>
-                <path d="m4.93 4.93 1.41 1.41"></path>
-                <path d="m17.66 17.66 1.41 1.41"></path>
-                <path d="M2 12h2"></path>
-                <path d="M20 12h2"></path>
-                <path d="m6.34 17.66-1.41 1.41"></path>
-                <path d="m19.07 4.93-1.41 1.41"></path>
-              </svg>
-            ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
-              </svg>
-            )}
-          </Button>
-        </div>
-
-        <Tabs defaultValue="patterns" className="h-[calc(100vh-4rem)]">
-          <div className="border-b px-4 py-2">
-            <TabsList className="w-full">
-              <TabsTrigger value="patterns" className="flex-1">Patterns</TabsTrigger>
-              <TabsTrigger value="layers" className="flex-1">Layers</TabsTrigger>
-              <TabsTrigger value="properties" className="flex-1">Properties</TabsTrigger>
-            </TabsList>
-          </div>
-
-          <div className="overflow-auto h-[calc(100%-5rem)] p-4 scrollbar-thin scrollbar-track-muted scrollbar-thumb-muted-foreground/30 hover:scrollbar-thumb-muted-foreground/50">
-            <TabsContent value="patterns" className="mt-0">
-              <h3 className="text-xs font-semibold text-muted-foreground mb-3">Layout Patterns</h3>
-              <div className="grid grid-cols-1 gap-3">
-                {Object.entries(PatternConstructor.previews).map(([id, { label, preview }]) => (
-                  <Card 
-                    key={id}
-                    className={`cursor-pointer hover:border-primary transition-colors p-3 ${selectedPattern === id ? 'border-primary' : ''}`}
-                    onClick={() => handlePatternSelect(id)}
-                  >
-                    <div dangerouslySetInnerHTML={{ __html: preview }} />
-                    <div className="mt-2 text-xs text-muted-foreground">{label}</div>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="layers" className="mt-0">
-              <div className="space-y-2"></div>
-            </TabsContent>
-
-            <TabsContent value="properties" className="mt-0">
-              <div className="space-y-4"></div>
-            </TabsContent>
-          </div>
-        </Tabs>
-      </aside>
-
+      <Sidebar 
+        theme={theme}
+        selectedPattern={selectedPattern}
+        onPatternSelect={handlePatternSelect}
+        onThemeToggle={toggleTheme}
+      />
+      
       {/* Main Content */}
       <main className="flex-1 overflow-auto p-6 scrollbar-thin scrollbar-track-muted scrollbar-thumb-muted-foreground/30 hover:scrollbar-thumb-muted-foreground/50">
         <div className="max-w-5xl mx-auto">
-          <div className="mb-6 flex items-center gap-3">
+          <div className="mb-6 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="outline"
+                size="sm"
+                asChild
+                className="gap-2"
+              >
+                <a href="/html-v3/index.html" target="_blank" rel="noopener" title="Stable Version 3 (HTML)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                    <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" />
+                    <path d="m21 3-9 9" />
+                    <path d="M15 3h6v6" />
+                  </svg>
+                  v.0.0.3
+                </a>
+              </Button>
+              <span className="text-xs text-muted-foreground flex items-center gap-2">
+                <span className="animate-pulse-dot"></span>
+                v.0.0.4 (React) is currently under development
+              </span>
+            </div>
+
             <Button 
-              variant="outline"
-              size="sm"
-              asChild
-              className="gap-2"
+              variant="ghost" 
+              size="icon"
+              onClick={toggleTheme}
+              className={theme === 'dark' ? 'text-primary' : 'text-muted-foreground'}
             >
-              <a href="/html-v3/index.html" target="_blank" rel="noopener" title="Stable Version 3 (HTML)">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-                  <path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6" />
-                  <path d="m21 3-9 9" />
-                  <path d="M15 3h6v6" />
+              {theme === 'dark' ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+                  <circle cx="12" cy="12" r="4"></circle>
+                  <path d="M12 2v2"></path>
+                  <path d="M12 20v2"></path>
+                  <path d="m4.93 4.93 1.41 1.41"></path>
+                  <path d="m17.66 17.66 1.41 1.41"></path>
+                  <path d="M2 12h2"></path>
+                  <path d="M20 12h2"></path>
+                  <path d="m6.34 17.66-1.41 1.41"></path>
+                  <path d="m19.07 4.93-1.41 1.41"></path>
                 </svg>
-                v.0.0.3
-              </a>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+                  <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+                </svg>
+              )}
             </Button>
-            <span className="text-xs text-muted-foreground flex items-center gap-2">
-              <span className="animate-pulse-dot"></span>
-              v.0.0.4 (React) is currently under development
-            </span>
           </div>
 
           <div id="canvas-container" className="relative bg-background/80 backdrop-blur-sm rounded-lg shadow-sm min-h-[548px] border border-border">
