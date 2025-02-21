@@ -149,10 +149,13 @@ export default function App() {
                   <path d="m21 3-9 9" />
                   <path d="M15 3h6v6" />
                 </svg>
-                Stable Version
+                v.0.0.3 stable
               </a>
             </Button>
-            <span className="text-xs text-muted-foreground">Version 4 (React) is currently under development</span>
+            <span className="text-xs text-muted-foreground flex items-center gap-2">
+              <span className="animate-pulse-dot"></span>
+              v.0.0.4 (React) is currently under development
+            </span>
           </div>
 
           <div id="canvas-container" className="relative bg-background/80 backdrop-blur-sm rounded-lg shadow-sm min-h-[548px] border border-border">
